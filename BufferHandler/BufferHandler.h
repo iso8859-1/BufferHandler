@@ -30,7 +30,40 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 */
 
+/**
+enum indicating the datatype inside the buffer
+*/
+enum DataType
+{
+	SignedIntegerLittleEndian,
+	UnsignedIntegerLittleEndian,
+	SignedIntegerBigEndian,
+	UnsignedIntegerBigEndian,
+	FloatLittleEndian,
+	FloatBigEndian
+};
 
+
+/**
+Interface class to read & write from a buffer
+*/
+class DataHandler;
+{
+public:
+	virtual void Write(unsigned int value, unsigned char* buffer, unsigned char* bufferSize);
+	virtual void Write(int value, unsigned char* buffer, unsigned char* bufferSize);
+	virtual void Write(double value, unsigned char* buffer, unsigned char* bufferSize);
+
+	
+	virtual unsigned int Read(unsigned char* buffer, unsigned char* bufferSize);
+	virtual int Read(unsigned char* buffer, unsigned char* bufferSize);
+	virtual double Read(unsigned char* buffer, unsigned char* bufferSize);
+};
+
+/**
+Factory method to create the appropriate reader/writer class
+*/
+DataHandler CreateBufferHandler(unsigned int startbit, unsigned int sizeInBits, DataType type);
 
 
 #endif
