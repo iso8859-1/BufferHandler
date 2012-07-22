@@ -113,7 +113,18 @@ class BitDataHandler : public DataHandler
 	{
 		return ((*reinterpret_cast<unsigned char*>(buffer+m_startByteOffset)) & m_readMask) != 0;
 	}
-	void WriteBit(bool value, unsigned char* buffer, size_t bufferSize);
+	void WriteBit(bool value, unsigned char* buffer, size_t bufferSize)
+	{
+		if (value)
+		{
+			*reinterpret_cast<unsigned char*>(buffer+m_startByteOffset) |= m_readMask;
+		}
+		else
+		{
+			*reinterpret_cast<unsigned char*>(buffer+m_startByteOffset) &= m_writeMask;
+		}
+	}
+
 public:
 	BitDataHandler(unsigned int startBit) 
 		: m_startByteOffset(startBit / 8)
