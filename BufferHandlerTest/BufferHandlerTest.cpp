@@ -35,6 +35,7 @@ either expressed or implied, of the FreeBSD Project.
 #include <boost/smart_ptr.hpp>
 #include "BufferHandler.h"
 
+#pragma region Lower Boundary Tests
 BOOST_AUTO_TEST_CASE(accessLowerBoundaryTest8UILE)
 {
 	unsigned char buffer[10] = {0,1,2,3,4,5,6,7,8,9};
@@ -114,7 +115,8 @@ BOOST_AUTO_TEST_CASE(accessLowerBoundaryTest64SILE)
 		BOOST_CHECK(value == 0x0706050403020100);
 	}
 }
-
+#pragma endregion
+#pragma region aligned access tests
 BOOST_AUTO_TEST_CASE(alignedAccessTestUILE8Bit)
 {
 	unsigned char buffer[10] = { 0,1,2,3,4,5,6,7,8,9};
@@ -177,8 +179,9 @@ BOOST_AUTO_TEST_CASE(alignedAccessTestSILE8Bit)
 		BOOST_CHECK(value == -1);
 	}
 }
-
-BOOST_AUTO_TEST_CASE( binaryAccess )
+#pragma endregion
+#pragma region bit access tests
+BOOST_AUTO_TEST_CASE( bitAccess )
 {
 	unsigned char buffer[10] = { 0,0xff,2,3,4,5,6,7,8,9};
 	auto h = CreateBufferHandler(3,1,SignedIntegerLittleEndian);
@@ -193,4 +196,4 @@ BOOST_AUTO_TEST_CASE( binaryAccess )
 		BOOST_CHECK(value == true);
 	}
 }
-
+#pragma endregion
