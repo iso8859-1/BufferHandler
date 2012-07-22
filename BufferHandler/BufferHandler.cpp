@@ -7,4 +7,6 @@ DataHandler CreateBufferHandler(unsigned int startbit, unsigned int sizeInBits, 
 	case SignedIntegerLittleEndian:
 
 	}
+	//default implementation - does only throw exceptions.
+	return DataHandler();
 }
