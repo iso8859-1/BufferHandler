@@ -76,7 +76,7 @@ class AlignedDataHandler : public DataHandler
 	T ReadData(char* buffer, size_t bufferSize);
 	void WriteData(T value, unsigned char* buffer, size_t bufferSize);
 public:
-	AlignedDataHandler(unsigned int startBit, unsigned int bitSize);
+	AlignedDataHandler(unsigned int startBit);
 
 	virtual void WriteULL(unsigned long long value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize); }
 	virtual void WriteLL(long long value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize); }

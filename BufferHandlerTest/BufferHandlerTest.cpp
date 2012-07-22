@@ -10,7 +10,8 @@
 BOOST_AUTO_TEST_CASE(alignedAccessTest)
 {
 	unsigned char buffer[10] = { 0,1,2,3,4,5,6,7,8,9};
-	DataHandler h = CreateBufferHandler(0,8,UnsignedIntegerLittleEndian);
+	DataHandler h = CreateBufferHandler(8,8,UnsignedIntegerLittleEndian);
 	long value = h.ReadL(&buffer[0],sizeof(buffer));
+	BOOST_CHECK(value == 1);
 }
 
