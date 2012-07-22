@@ -30,4 +30,4 @@ of the authors and should not be interpreted as representing official policies,
 either expressed or implied, of the FreeBSD Project.
 
 
-Dependencies: none. The test requires boost::test & boost::timer (for performance measurements)
+Dependencies: Boost SmartPtr, cstdint.h from boost. The test requires boost::test & boost::timer (for performance measurements)
