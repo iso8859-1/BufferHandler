@@ -105,14 +105,23 @@ public:
 class BitDataHandler : public DataHandler
 {
 	unsigned int m_startByteOffset;
+	unsigned int m_bitOffsetInsideByte;
+	unsigned char m_readMask;
+	unsigned char m_writeMask;
 
-	bool ReadBit(unsigned char* buffer, size_t bufferSize);
+	bool ReadBit(unsigned char* buffer, size_t bufferSize)
+	{
+		return ((*reinterpret_cast<unsigned char*>(buffer+m_startByteOffset)) & m_readMask) != 0;
+	}
 	void WriteBit(bool value, unsigned char* buffer, size_t bufferSize);
 public:
-	BitDataHandler(unsigned int startBit) : m_startByteOffset(startBit / 8) 
-	{
-		
-	}
+	BitDataHandler(unsigned int startBit) 
+		: m_startByteOffset(startBit / 8)
+		, m_bitOffsetInsideByte(startBit % 8)
+		, m_readMask(1<<m_bitOffsetInsideByte)
+		, m_writeMask(~m_readMask)
+	{}
+
 	virtual ~BitDataHandler(){}
 
 	virtual void WriteULL(unsigned long long value, unsigned char* buffer, size_t bufferSize) { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
