@@ -31,6 +31,8 @@ either expressed or implied, of the FreeBSD Project.
 */
 #include <cstring>
 #include <stdexcept>
+#include <cassert>
+#include <boost/smart_ptr.hpp>
 
 /**
 enum indicating the datatype inside the buffer
@@ -71,12 +73,16 @@ public:
 template <typename T>
 class AlignedDataHandler : public DataHandler
 {
-	unsigned int startByteOffset;
+	unsigned int m_startByteOffset;
 
-	T ReadData(char* buffer, size_t bufferSize);
+	T ReadData(unsigned char* buffer, size_t bufferSize);
 	void WriteData(T value, unsigned char* buffer, size_t bufferSize);
 public:
-	AlignedDataHandler(unsigned int startBit);
+	AlignedDataHandler(unsigned int startBit) : m_startByteOffset(startBit / 8) 
+	{
+		assert(startBit % 8 == 0);
+	}
+	virtual ~AlignedDataHandler(){}
 
 	virtual void WriteULL(unsigned long long value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize); }
 	virtual void WriteLL(long long value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize); }
@@ -86,20 +92,32 @@ public:
 	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize); }
 
 	
-	virtual unsigned long long ReadULL(unsigned char* buffer, size_t bufferSize) { return static_cast<unsigned long long>(Read(buffer, bufferSize)); }
-	virtual long long ReadLL(unsigned char* buffer, size_t bufferSize) { return static_cast<long long>(Read(buffer, bufferSize)); }
-	virtual unsigned long ReadUL(unsigned char* buffer, size_t bufferSize){ return static_cast<unsigned long>(Read(buffer, bufferSize)); }
-	virtual long ReadL(unsigned char* buffer, size_t bufferSize) { return static_cast<long>(Read(buffer, bufferSize)); }
-	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { return static_cast<float>(Read(buffer, bufferSize)); }
-	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { return static_cast<double>(Read(buffer, bufferSize)); }
+	virtual unsigned long long ReadULL(unsigned char* buffer, size_t bufferSize) { return static_cast<unsigned long long>(ReadData(buffer, bufferSize)); }
+	virtual long long ReadLL(unsigned char* buffer, size_t bufferSize) { return static_cast<long long>(ReadData(buffer, bufferSize)); }
+	virtual unsigned long ReadUL(unsigned char* buffer, size_t bufferSize){ return static_cast<unsigned long>(ReadData(buffer, bufferSize)); }
+	virtual long ReadL(unsigned char* buffer, size_t bufferSize) { return static_cast<long>(ReadData(buffer, bufferSize)); }
+	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { return static_cast<float>(ReadData(buffer, bufferSize)); }
+	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { return static_cast<double>(ReadData(buffer, bufferSize)); }
 };
 
 /**
 Factory method to create the appropriate reader/writer class
 */
-DataHandler CreateBufferHandler(unsigned int startbit, unsigned int sizeInBits, DataType type);
+boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsigned int sizeInBits, DataType type);
 
 //************************** Implementation Section ***********************************************************
 
+template <typename T>
+void AlignedDataHandler<T>::WriteData(T value, unsigned char* buffer, size_t bufferSize)
+{
+	assert(m_startByteOffset + sizeof(T) < bufferSize);
+	*reinterpret_cast<T*>(buffer+m_startByteOffset)=value;
+}
 
+template <typename T>
+T AlignedDataHandler<T>::ReadData(unsigned char* buffer, size_t bufferSize)
+{
+	assert(m_startByteOffset + sizeof(T) < bufferSize);
+	return *reinterpret_cast<T*>(buffer+m_startByteOffset);
+}
 #endif

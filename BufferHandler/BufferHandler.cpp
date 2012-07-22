@@ -5,7 +5,7 @@
 
 
 
-DataHandler CreateAlignedDataHandler(unsigned int startbit, unsigned int sizeInBits, DataType type)
+boost::shared_ptr<DataHandler> CreateAlignedDataHandler(unsigned int startbit, unsigned int sizeInBits, DataType type)
 {
 	assert(sizeInBits == 8 || sizeInBits == 16 || sizeInBits == 32 || sizeInBits ==64);
 	assert(startbit % 8 == 0);
@@ -15,13 +15,13 @@ DataHandler CreateAlignedDataHandler(unsigned int startbit, unsigned int sizeInB
 		switch(sizeInBits)
 		{
 		case 8:
-			return AlignedDataHandler<boost::uint8_t>(startbit);
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint8_t>(startbit));
 		case 16:
-			return AlignedDataHandler<boost::uint16_t>(startbit);
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint16_t>(startbit));
 		case 32:
-			return AlignedDataHandler<boost::uint32_t>(startbit);
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint32_t>(startbit));
 		case 64:
-			return AlignedDataHandler<boost::uint64_t>(startbit);
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint64_t>(startbit));
 		default:
 			throw std::logic_error("not valid");
 		}
@@ -29,13 +29,13 @@ DataHandler CreateAlignedDataHandler(unsigned int startbit, unsigned int sizeInB
 		switch(sizeInBits)
 		{
 		case 8:
-			return AlignedDataHandler<boost::int8_t>(startbit);
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int8_t>(startbit));
 		case 16:
-			return AlignedDataHandler<boost::int16_t>(startbit);
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int16_t>(startbit));
 		case 32:
-			return AlignedDataHandler<boost::int32_t>(startbit);
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int32_t>(startbit));
 		case 64:
-			return AlignedDataHandler<boost::int64_t>(startbit);
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int64_t>(startbit));
 		default:
 			throw std::logic_error("not valid");
 		}
@@ -43,9 +43,9 @@ DataHandler CreateAlignedDataHandler(unsigned int startbit, unsigned int sizeInB
 		switch(sizeInBits)
 		{
 		case 32:
-			return AlignedDataHandler<float>(startbit);
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<float>(startbit));
 		case 64:
-			return AlignedDataHandler<double>(startbit);
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<double>(startbit));
 		default:
 			throw std::logic_error("not valid");
 		}
@@ -54,16 +54,16 @@ DataHandler CreateAlignedDataHandler(unsigned int startbit, unsigned int sizeInB
 	}
 }
 
-DataHandler CreateBufferHandler(unsigned int startbit, unsigned int sizeInBits, DataType type)
+boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsigned int sizeInBits, DataType type)
 {
 	try
 	{
 		return CreateAlignedDataHandler(startbit, sizeInBits, type);
 	} 
-	catch(const std::logic_error& e)
+	catch(const std::logic_error&)
 	{
 		//try next handler type
 	}
 	//default implementation - does only throw exceptions.
-	return DataHandler();
+	return boost::shared_ptr<DataHandler>(new DataHandler());
 }
