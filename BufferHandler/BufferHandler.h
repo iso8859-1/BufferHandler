@@ -102,6 +102,36 @@ public:
 	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { return static_cast<bool>(ReadData(buffer, bufferSize)); }
 };
 
+class BitDataHandler : public DataHandler
+{
+	unsigned int m_startByteOffset;
+
+	bool ReadBit(unsigned char* buffer, size_t bufferSize);
+	void WriteBit(bool value, unsigned char* buffer, size_t bufferSize);
+public:
+	BitDataHandler(unsigned int startBit) : m_startByteOffset(startBit / 8) 
+	{
+		
+	}
+	virtual ~BitDataHandler(){}
+
+	virtual void WriteULL(unsigned long long value, unsigned char* buffer, size_t bufferSize) { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
+	virtual void WriteLL(long long value, unsigned char* buffer, size_t bufferSize) { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
+	virtual void WriteUL(unsigned long value, unsigned char* buffer, size_t bufferSize) { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
+	virtual void WriteL(long value, unsigned char* buffer, size_t bufferSize) { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
+	virtual void WriteF(float value, unsigned char* buffer, size_t bufferSize) { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
+	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
+	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize) { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
+	
+	virtual unsigned long long ReadULL(unsigned char* buffer, size_t bufferSize) { return static_cast<unsigned long long>(ReadBit(buffer, bufferSize)); }
+	virtual long long ReadLL(unsigned char* buffer, size_t bufferSize) { return static_cast<long long>(ReadBit(buffer, bufferSize)); }
+	virtual unsigned long ReadUL(unsigned char* buffer, size_t bufferSize){ return static_cast<unsigned long>(ReadBit(buffer, bufferSize)); }
+	virtual long ReadL(unsigned char* buffer, size_t bufferSize) { return static_cast<long>(ReadBit(buffer, bufferSize)); }
+	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { return static_cast<float>(ReadBit(buffer, bufferSize)); }
+	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { return static_cast<double>(ReadBit(buffer, bufferSize)); }
+	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { return static_cast<bool>(ReadBit(buffer, bufferSize)); }
+};
+
 /**
 Factory method to create the appropriate reader/writer class
 */
