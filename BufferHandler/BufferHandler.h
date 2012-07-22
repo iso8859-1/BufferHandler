@@ -60,7 +60,7 @@ public:
 	virtual void WriteL(long value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
 	virtual void WriteF(float value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
 	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-
+	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
 	
 	virtual unsigned long long ReadULL(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
 	virtual long long ReadLL(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
@@ -68,6 +68,7 @@ public:
 	virtual long ReadL(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
 	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
 	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
 };
 
 template <typename T>
@@ -90,7 +91,7 @@ public:
 	virtual void WriteL(long value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize); }
 	virtual void WriteF(float value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize); }
 	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize); }
-
+	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize); }
 	
 	virtual unsigned long long ReadULL(unsigned char* buffer, size_t bufferSize) { return static_cast<unsigned long long>(ReadData(buffer, bufferSize)); }
 	virtual long long ReadLL(unsigned char* buffer, size_t bufferSize) { return static_cast<long long>(ReadData(buffer, bufferSize)); }
@@ -98,6 +99,7 @@ public:
 	virtual long ReadL(unsigned char* buffer, size_t bufferSize) { return static_cast<long>(ReadData(buffer, bufferSize)); }
 	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { return static_cast<float>(ReadData(buffer, bufferSize)); }
 	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { return static_cast<double>(ReadData(buffer, bufferSize)); }
+	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { return static_cast<bool>(ReadData(buffer, bufferSize)); }
 };
 
 /**
