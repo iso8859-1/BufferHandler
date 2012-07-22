@@ -3,6 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BufferHandler", "BufferHandler\BufferHandler.vcxproj", "{DD7135F7-1D67-4A5A-8128-B2E5B9F75CD7}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BufferHandlerTest", "BufferHandlerTest\BufferHandlerTest.vcxproj", "{472A1DAB-25A1-4EC3-94AB-FE4A1BD469A8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{DD7135F7-1D67-4A5A-8128-B2E5B9F75CD7} = {DD7135F7-1D67-4A5A-8128-B2E5B9F75CD7}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -13,6 +18,10 @@ Global
 		{DD7135F7-1D67-4A5A-8128-B2E5B9F75CD7}.Debug|Win32.Build.0 = Debug|Win32
 		{DD7135F7-1D67-4A5A-8128-B2E5B9F75CD7}.Release|Win32.ActiveCfg = Release|Win32
 		{DD7135F7-1D67-4A5A-8128-B2E5B9F75CD7}.Release|Win32.Build.0 = Release|Win32
+		{472A1DAB-25A1-4EC3-94AB-FE4A1BD469A8}.Debug|Win32.ActiveCfg = Debug|Win32
+		{472A1DAB-25A1-4EC3-94AB-FE4A1BD469A8}.Debug|Win32.Build.0 = Debug|Win32
+		{472A1DAB-25A1-4EC3-94AB-FE4A1BD469A8}.Release|Win32.ActiveCfg = Release|Win32
+		{472A1DAB-25A1-4EC3-94AB-FE4A1BD469A8}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
