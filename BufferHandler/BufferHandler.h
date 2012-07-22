@@ -70,9 +70,13 @@ public:
 template <typename T>
 class AlignedDataHandler : public DataHandler
 {
+	unsigned int startByteOffset;
+
 	T ReadData(char* buffer, size_t bufferSize);
 	void WriteData(T value, unsigned char* buffer, size_t bufferSize);
 public:
+	AlignedDataHandler(unsigned int startBit, unsigned int bitSize);
+
 	virtual void WriteULL(unsigned long long value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize; }
 	virtual void WriteLL(long long value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize; }
 	virtual void WriteUL(unsigned long value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize; }
@@ -93,6 +97,8 @@ public:
 Factory method to create the appropriate reader/writer class
 */
 DataHandler CreateBufferHandler(unsigned int startbit, unsigned int sizeInBits, DataType type);
+
+//************************** Implementation Section ***********************************************************
 
 
 #endif
