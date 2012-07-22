@@ -201,6 +201,61 @@ BOOST_AUTO_TEST_CASE( bitAccess )
 #pragma endregion
 
 #pragma region Writing Tests
+#pragma region Aligned Writing Test
+BOOST_AUTO_TEST_CASE(alignedWritingTestUILE8Bit)
+{
+	unsigned char buffer[10] = { 0,1,2,3,4,5,6,7,8,9};
+	auto h = CreateBufferHandler(8,8,UnsignedIntegerLittleEndian);
+
+	{
+		h->WriteLL(2,&buffer[0],sizeof(buffer));
+		BOOST_CHECK(buffer[1] == 2);
+	}
+	{
+		h->WriteL(3,&buffer[0],sizeof(buffer));
+		BOOST_CHECK(buffer[1] == 3);
+	}
+	{
+		h->WriteULL(4,&buffer[0],sizeof(buffer));
+		BOOST_CHECK(buffer[1] == 4);
+	}
+	{
+		h->WriteUL(5,&buffer[0],sizeof(buffer));
+		BOOST_CHECK(buffer[1] == 5);
+	}
+	{
+		h->WriteF(6,&buffer[0],sizeof(buffer));
+		BOOST_CHECK(buffer[1] == 6);
+	}
+	{
+		h->WriteD(7,&buffer[0],sizeof(buffer));
+		BOOST_CHECK(buffer[1] == 7);
+	}
+}
+
+BOOST_AUTO_TEST_CASE(alignedWritingTestSILE8Bit)
+{
+	unsigned char buffer[10] = { 0,-1,2,3,4,5,6,7,8,9};
+	auto h = CreateBufferHandler(8,8,SignedIntegerLittleEndian);
+
+	{
+		h->WriteLL(-2,&buffer[0],sizeof(buffer));
+		BOOST_CHECK(reinterpret_cast<char&>(buffer[1]) == -2);
+	}
+	{
+		h->WriteL(-3,&buffer[0],sizeof(buffer));
+		BOOST_CHECK(reinterpret_cast<char&>(buffer[1]) == -3);
+	}
+	{
+		h->WriteF(-6,&buffer[0],sizeof(buffer));
+		BOOST_CHECK(reinterpret_cast<char&>(buffer[1]) == -6);
+	}
+	{
+		h->WriteD(-7,&buffer[0],sizeof(buffer));
+		BOOST_CHECK(reinterpret_cast<char&>(buffer[1]) == -7);
+	}
+}
+#pragma endregion
 #pragma region Bit Writing Tests
 BOOST_AUTO_TEST_CASE( bitWriting )
 {
