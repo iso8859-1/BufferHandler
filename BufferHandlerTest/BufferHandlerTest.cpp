@@ -35,6 +35,7 @@ either expressed or implied, of the FreeBSD Project.
 #include <boost/smart_ptr.hpp>
 #include "BufferHandler.h"
 
+#pragma region Reading Tests
 #pragma region Lower Boundary Tests
 BOOST_AUTO_TEST_CASE(accessLowerBoundaryTest8UILE)
 {
@@ -196,4 +197,25 @@ BOOST_AUTO_TEST_CASE( bitAccess )
 		BOOST_CHECK(value == true);
 	}
 }
+#pragma endregion
+#pragma endregion
+
+#pragma region Writing Tests
+#pragma region Bit Writing Tests
+BOOST_AUTO_TEST_CASE( bitWriting )
+{
+	unsigned char buffer[10] = {0,0,0xFF,0,0,0,0,0,0,0};
+	auto h = CreateBufferHandler(3,1,SignedIntegerLittleEndian);
+	auto h2 = CreateBufferHandler(17,1,FloatLittleEndian);
+
+	{
+		h->WriteB(true,&buffer[0],sizeof(buffer));
+		BOOST_CHECK(buffer[0] == 8); //2^3
+	}
+	{
+		h2->WriteB(false, &buffer[0],sizeof(buffer));
+		BOOST_CHECK(buffer[2] == 0xFF-2);
+	}
+}
+#pragma endregion
 #pragma endregion
