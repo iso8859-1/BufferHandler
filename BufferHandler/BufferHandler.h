@@ -29,6 +29,7 @@ The views and conclusions contained in the software and documentation are those
 of the authors and should not be interpreted as representing official policies, 
 either expressed or implied, of the FreeBSD Project.
 */
+#include <cstring>
 
 /**
 enum indicating the datatype inside the buffer
@@ -47,18 +48,46 @@ enum DataType
 /**
 Interface class to read & write from a buffer
 */
-class DataHandler;
+class DataHandler
 {
 public:
-	virtual void Write(unsigned int value, unsigned char* buffer, unsigned char* bufferSize);
-	virtual void Write(int value, unsigned char* buffer, unsigned char* bufferSize);
-	virtual void Write(double value, unsigned char* buffer, unsigned char* bufferSize);
+	virtual void WriteULL(unsigned long long value, unsigned char* buffer, size_t bufferSize)=0;
+	virtual void WriteLL(long long value, unsigned char* buffer, size_t bufferSize)=0;
+	virtual void WriteUL(unsigned long value, unsigned char* buffer, size_t bufferSize)=0;
+	virtual void WriteL(long value, unsigned char* buffer, size_t bufferSize)=0;
+	virtual void WriteF(float value, unsigned char* buffer, size_t bufferSize)=0;
+	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize)=0;
 
 	
-	virtual unsigned int Read(unsigned char* buffer, unsigned char* bufferSize);
-	virtual int Read(unsigned char* buffer, unsigned char* bufferSize);
-	virtual double Read(unsigned char* buffer, unsigned char* bufferSize);
+	virtual unsigned long long ReadULL(unsigned char* buffer, size_t bufferSize)=0;
+	virtual long long ReadLL(unsigned char* buffer, size_t bufferSize)=0;
+	virtual unsigned long ReadUL(unsigned char* buffer, size_t bufferSize)=0;
+	virtual long ReadL(unsigned char* buffer, size_t bufferSize)=0;
+	virtual float ReadF(unsigned char* buffer, size_t bufferSize)=0;
+	virtual double ReadD(unsigned char* buffer, size_t bufferSize)=0;
 };
+
+template <typename T>
+class AlignedDataHandler : public DataHandler
+{
+	T ReadData(char* buffer, size_t bufferSize);
+	void WriteData(T value, unsigned char* buffer, size_t bufferSize);
+public:
+	virtual void WriteULL(unsigned long long value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize; }
+	virtual void WriteLL(long long value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize; }
+	virtual void WriteUL(unsigned long value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize; }
+	virtual void WriteL(long value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize; }
+	virtual void WriteF(float value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize; }
+	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize; }
+
+	
+	virtual unsigned long long ReadULL(unsigned char* buffer, size_t bufferSize) { return static_cast<unsigned long long>(Read(buffer, bufferSize)); }
+	virtual long long ReadLL(unsigned char* buffer, size_t bufferSize) { return static_cast<long long>(Read(buffer, bufferSize)); }
+	virtual unsigned long ReadUL(unsigned char* buffer, size_t bufferSize){ return static_cast<unsigned long>(Read(buffer, bufferSize)); }
+	virtual long ReadL(unsigned char* buffer, size_t bufferSize) { return static_cast<long>(Read(buffer, bufferSize)); }
+	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { return static_cast<float>(Read(buffer, bufferSize)); }
+	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { return static_cast<double>(Read(buffer, bufferSize)); }
+}
 
 /**
 Factory method to create the appropriate reader/writer class
