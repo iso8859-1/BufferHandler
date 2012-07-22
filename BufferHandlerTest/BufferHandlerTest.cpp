@@ -178,3 +178,19 @@ BOOST_AUTO_TEST_CASE(alignedAccessTestSILE8Bit)
 	}
 }
 
+BOOST_AUTO_TEST_CASE( binaryAccess )
+{
+	unsigned char buffer[10] = { 0,0xff,2,3,4,5,6,7,8,9};
+	auto h = CreateBufferHandler(3,1,SignedIntegerLittleEndian);
+	auto h2 = CreateBufferHandler(17,1,FloatLittleEndian);
+
+	{
+		auto value = h->ReadB(&buffer[0],sizeof(buffer));
+		BOOST_CHECK(value == false);
+	}
+	{
+		auto value = h2->ReadB(&buffer[0],sizeof(buffer));
+		BOOST_CHECK(value == true);
+	}
+}
+
