@@ -70,6 +70,42 @@ inline boost::uint64_t Swap64(boost::uint64_t src)
 	return result;
 }
 
+template<typename SwapSize>
+struct SwapPolicyNone
+{
+	inline static SwapSize Swap(SwapSize src) { return src; }
+};
+
+template<typename SwapSize>
+struct SwapPolicySwap
+{
+	inline static SwapSize Swap(SwapSize src) { throw std::logic_error("swaping not implemented"); }
+};
+
+template<>
+struct SwapPolicySwap<boost::uint16_t>
+{
+	inline static boost::uint16_t Swap(boost::uint16_t src) { return Swap16(src); }
+};
+
+template<>
+struct SwapPolicySwap<boost::uint32_t>
+{
+	inline static boost::uint16_t Swap(boost::uint32_t src) { return Swap32(src); }
+};
+
+template<>
+struct SwapPolicySwap<boost::uint64_t>
+{
+	inline static boost::uint16_t Swap(boost::uint64_t src) { return Swap64(src); }
+};
+
+template<>
+struct SwapPolicySwap<boost::uint8_t>
+{
+	inline static boost::uint8_t Swap(boost::uint8_t src) { return src; }
+};
+
 
 /**
 Interface class to read & write from a buffer
@@ -94,7 +130,7 @@ public:
 	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
 };
 
-template <typename T>
+template <typename T, typename intermediateType, typename swapPolicy>
 class AlignedDataHandler : public DataHandler
 {
 	unsigned int m_startByteOffset;
@@ -182,17 +218,19 @@ boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsign
 
 //************************** Implementation Section ***********************************************************
 
-template <typename T>
-void AlignedDataHandler<T>::WriteData(T value, unsigned char* buffer, size_t bufferSize)
+template <typename T, typename intermediateType, typename swapPolicy>
+void AlignedDataHandler<T,intermediateType,swapPolicy>::WriteData(T value, unsigned char* buffer, size_t bufferSize)
 {
 	assert(m_startByteOffset + sizeof(T) - 1 < bufferSize);
-	*reinterpret_cast<T*>(buffer+m_startByteOffset)=value;
+	*reinterpret_cast<T*>(buffer+m_startByteOffset)=swapPolicy::Swap(*reinterpret_cast<intermediateType*>(&value));
 }
 
-template <typename T>
-T AlignedDataHandler<T>::ReadData(unsigned char* buffer, size_t bufferSize)
+template <typename T, typename intermediateType, typename swapPolicy>
+T AlignedDataHandler<T,intermediateType,swapPolicy>::ReadData(unsigned char* buffer, size_t bufferSize)
 {
 	assert(m_startByteOffset + sizeof(T) - 1 < bufferSize);
-	return *reinterpret_cast<T*>(buffer+m_startByteOffset);
+	intermediateType tmp = *reinterpret_cast<intermediateType*>(buffer+m_startByteOffset);
+	intermediateType result = swapPolicy::Swap(tmp);
+	return *reinterpret_cast<T*>(&result);
 }
 #endif

@@ -73,7 +73,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>..\..\..\boost_1_50_0\stage\lib;</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\boost_1_50_0\stage\lib;..\$(Configuration)</AdditionalLibraryDirectories>
       <AdditionalDependencies>BufferHandler.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
