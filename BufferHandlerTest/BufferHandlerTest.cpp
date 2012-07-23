@@ -35,6 +35,33 @@ either expressed or implied, of the FreeBSD Project.
 #include <boost/smart_ptr.hpp>
 #include "BufferHandler.h"
 
+#pragma region EndianSwap Tests
+BOOST_AUTO_TEST_CASE ( Swap16Test )
+{
+	boost::uint16_t testvalue = 0x0102;
+	auto result = Swap16(testvalue);
+	BOOST_CHECK(result == 0x0201);
+	auto result2 = Swap16(result);
+	BOOST_CHECK(result2 = testvalue);
+}
+BOOST_AUTO_TEST_CASE ( Swap32Test )
+{
+	boost::uint32_t testvalue = 0x01020304;
+	auto result = Swap32(testvalue);
+	BOOST_CHECK(result == 0x04030201);
+	auto result2 = Swap32(result);
+	BOOST_CHECK(result2 = testvalue);
+}
+BOOST_AUTO_TEST_CASE ( Swap64Test )
+{
+	boost::uint64_t testvalue = 0x0102030405060708;
+	auto result = Swap64(testvalue);
+	BOOST_CHECK(result == 0x0807060504030201);
+	auto result2 = Swap64(result);
+	BOOST_CHECK(result2 = testvalue);
+}
+#pragma endregion
+
 #pragma region Reading Tests
 #pragma region Lower Boundary Tests
 BOOST_AUTO_TEST_CASE(accessLowerBoundaryTest8UILE)

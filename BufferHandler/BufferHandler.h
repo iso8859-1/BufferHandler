@@ -33,6 +33,7 @@ either expressed or implied, of the FreeBSD Project.
 #include <stdexcept>
 #include <cassert>
 #include <boost/smart_ptr.hpp>
+#include <boost\cstdint.hpp>
 
 /**
 enum indicating the datatype inside the buffer
@@ -46,6 +47,28 @@ enum DataType
 	FloatLittleEndian,
 	FloatBigEndian
 };
+
+//Endian swap functions
+inline boost::uint16_t Swap16(boost::uint16_t src)
+{
+	return src << 8 | src >> 8;
+}
+inline boost::uint32_t Swap32(boost::uint32_t src)
+{
+	boost::uint32_t result = src << 16 | src >> 16;
+	boost::uint32_t mask = 0xFF00FF00;
+	result = ((result << 8) & mask) | ((result & mask) >> 8);
+	return result;
+}
+inline boost::uint64_t Swap64(boost::uint64_t src)
+{
+	boost::uint64_t result = src << 32 | src >> 32;
+	boost::uint64_t mask = 0xFFFF0000FFFF0000;
+	result = ((result << 16) & mask) | ((result & mask) >> 16);
+	mask = 0xFF00FF00FF00FF00;
+	result = ((result << 8) & mask) | ((result & mask) >> 8);
+	return result;
+}
 
 
 /**

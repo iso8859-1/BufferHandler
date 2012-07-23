@@ -30,8 +30,6 @@ either expressed or implied, of the FreeBSD Project.
 */
 
 #include <cassert>
-#include "boost\cstdint.hpp"
-
 
 
 boost::shared_ptr<DataHandler> CreateAlignedDataHandler(unsigned int startbit, unsigned int sizeInBits, DataType type)
