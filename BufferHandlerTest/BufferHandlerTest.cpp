@@ -151,7 +151,7 @@ BOOST_AUTO_TEST_CASE(genericAlignedAccessTest)
 
 	for (int i=8; i<=64; i*=2)
 	{
-		for (int offset = 0; offset<sizeof(buffer)*8-i+1; offset+=8)
+		for (unsigned int offset = 0; offset<sizeof(buffer)*8-i+1; offset+=8)
 		{
 			auto h = CreateBufferHandler(offset, i, UnsignedIntegerLittleEndian);
 			{

@@ -76,6 +76,44 @@ boost::shared_ptr<DataHandler> CreateAlignedDataHandler(unsigned int startbit, u
 		default:
 			throw std::logic_error("not valid");
 		}
+	case UnsignedIntegerBigEndian:
+		switch(sizeInBits)
+		{
+		case 8:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint8_t,boost::uint8_t,SwapPolicySwap<boost::uint8_t>>(startbit));
+		case 16:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint16_t,boost::uint16_t,SwapPolicySwap<boost::uint16_t>>(startbit));
+		case 32:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint32_t,boost::uint32_t,SwapPolicySwap<boost::uint32_t>>(startbit));
+		case 64:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint64_t,boost::uint64_t,SwapPolicySwap<boost::uint64_t>>(startbit));
+		default:
+			throw std::logic_error("not valid");
+		}
+	case SignedIntegerBigEndian:
+		switch(sizeInBits)
+		{
+		case 8:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int8_t,boost::uint8_t,SwapPolicySwap<boost::uint8_t>>(startbit));
+		case 16:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int16_t,boost::uint16_t,SwapPolicySwap<boost::uint16_t>>(startbit));
+		case 32:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int32_t,boost::uint32_t,SwapPolicySwap<boost::uint32_t>>(startbit));
+		case 64:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int64_t,boost::uint64_t,SwapPolicySwap<boost::uint64_t>>(startbit));
+		default:
+			throw std::logic_error("not valid");
+		}
+	case FloatBigEndian:
+		switch(sizeInBits)
+		{
+		case 32:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<float,boost::uint32_t,SwapPolicySwap<boost::uint32_t>>(startbit));
+		case 64:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<double,boost::uint64_t,SwapPolicySwap<boost::uint64_t>>(startbit));
+		default:
+			throw std::logic_error("not valid");
+		}
 	default:
 		throw std::logic_error("not valid");
 	}

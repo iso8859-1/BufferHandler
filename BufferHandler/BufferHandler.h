@@ -35,6 +35,9 @@ either expressed or implied, of the FreeBSD Project.
 #include <boost/smart_ptr.hpp>
 #include <boost\cstdint.hpp>
 
+#pragma warning( push )
+#pragma warning( disable : 4800) //disable warning "forcing value to bool 'true' or 'false' (performance warning)
+
 /**
 enum indicating the datatype inside the buffer
 */
@@ -91,13 +94,13 @@ struct SwapPolicySwap<boost::uint16_t>
 template<>
 struct SwapPolicySwap<boost::uint32_t>
 {
-	inline static boost::uint16_t Swap(boost::uint32_t src) { return Swap32(src); }
+	inline static boost::uint32_t Swap(boost::uint32_t src) { return Swap32(src); }
 };
 
 template<>
 struct SwapPolicySwap<boost::uint64_t>
 {
-	inline static boost::uint16_t Swap(boost::uint64_t src) { return Swap64(src); }
+	inline static boost::uint64_t Swap(boost::uint64_t src) { return Swap64(src); }
 };
 
 template<>
@@ -222,7 +225,10 @@ template <typename T, typename intermediateType, typename swapPolicy>
 void AlignedDataHandler<T,intermediateType,swapPolicy>::WriteData(T value, unsigned char* buffer, size_t bufferSize)
 {
 	assert(m_startByteOffset + sizeof(T) - 1 < bufferSize);
-	*reinterpret_cast<T*>(buffer+m_startByteOffset)=swapPolicy::Swap(*reinterpret_cast<intermediateType*>(&value));
+	intermediateType tmp = *reinterpret_cast<intermediateType*>(&value);
+	intermediateType swappedIfNeeded = swapPolicy::Swap(tmp);
+	//this works as long as the intermediateType has the same width as T because we just want the pattern at that location
+	*reinterpret_cast<intermediateType*>(buffer+m_startByteOffset)=swappedIfNeeded;
 }
 
 template <typename T, typename intermediateType, typename swapPolicy>
@@ -233,4 +239,7 @@ T AlignedDataHandler<T,intermediateType,swapPolicy>::ReadData(unsigned char* buf
 	intermediateType result = swapPolicy::Swap(tmp);
 	return *reinterpret_cast<T*>(&result);
 }
+
+#pragma warning( pop )
+
 #endif
