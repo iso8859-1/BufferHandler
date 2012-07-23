@@ -185,14 +185,14 @@ boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsign
 template <typename T>
 void AlignedDataHandler<T>::WriteData(T value, unsigned char* buffer, size_t bufferSize)
 {
-	assert(m_startByteOffset + sizeof(T) < bufferSize);
+	assert(m_startByteOffset + sizeof(T) - 1 < bufferSize);
 	*reinterpret_cast<T*>(buffer+m_startByteOffset)=value;
 }
 
 template <typename T>
 T AlignedDataHandler<T>::ReadData(unsigned char* buffer, size_t bufferSize)
 {
-	assert(m_startByteOffset + sizeof(T) < bufferSize);
+	assert(m_startByteOffset + sizeof(T) - 1 < bufferSize);
 	return *reinterpret_cast<T*>(buffer+m_startByteOffset);
 }
 #endif
