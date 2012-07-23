@@ -163,6 +163,57 @@ BOOST_AUTO_TEST_CASE(genericAlignedAccessTest)
 				}
 				BOOST_CHECK(value == expected);
 			}
+			{
+				auto value = h->ReadLL(&buffer[0],sizeof(buffer));
+				long long expected = 0;
+				for (int counter = i; counter > 0; counter -=8)
+				{
+					expected = (expected << 8) + buffer[(offset+counter)/8-1];
+				}
+				BOOST_CHECK(value == expected);
+			}
+			{
+				auto value = h->ReadD(&buffer[0],sizeof(buffer));
+				unsigned long long expected = 0;
+				for (int counter = i; counter > 0; counter -=8)
+				{
+					expected = (expected << 8) + buffer[(offset+counter)/8-1];
+				}
+				BOOST_CHECK(value == expected);
+			}
+			if (i<=32)
+			{
+				{
+				auto value = h->ReadUL(&buffer[0],sizeof(buffer));
+				unsigned long long expected = 0;
+				for (int counter = i; counter > 0; counter -=8)
+				{
+					expected = (expected << 8) + buffer[(offset+counter)/8-1];
+				}
+				BOOST_CHECK(value == expected);
+				}
+				{
+					auto value = h->ReadL(&buffer[0],sizeof(buffer));
+					long long expected = 0;
+					for (int counter = i; counter > 0; counter -=8)
+					{
+						expected = (expected << 8) + buffer[(offset+counter)/8-1];
+					}
+					BOOST_CHECK(value == expected);
+				}
+			}
+			if (i<=16)
+			{
+				{
+					auto value = h->ReadF(&buffer[0],sizeof(buffer));
+					long long expected = 0;
+					for (int counter = i; counter > 0; counter -=8)
+					{
+						expected = (expected << 8) + buffer[(offset+counter)/8-1];
+					}
+					BOOST_CHECK(value == expected);
+				}
+			}
 		}
 	}
 }
