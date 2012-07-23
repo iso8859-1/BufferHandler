@@ -217,6 +217,80 @@ BOOST_AUTO_TEST_CASE(genericAlignedAccessTest)
 		}
 	}
 }
+
+BOOST_AUTO_TEST_CASE(genericAlignedAccessTestBigEndian)
+{
+	unsigned char buffer[15] = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15};
+
+	for (int i=8; i<=64; i*=2)
+	{
+		for (unsigned int offset = 0; offset<sizeof(buffer)*8-i+1; offset+=8)
+		{
+			auto h = CreateBufferHandler(offset, i, UnsignedIntegerBigEndian);
+			{
+				auto value = h->ReadULL(&buffer[0],sizeof(buffer));
+				unsigned long long expected = 0;
+				for (int counter = 8; counter <= i; counter +=8)
+				{
+					expected = (expected << 8) + buffer[(offset+counter)/8-1];
+				}
+				BOOST_CHECK(value == expected);
+			}
+			{
+				auto value = h->ReadLL(&buffer[0],sizeof(buffer));
+				long long expected = 0;
+				for (int counter = 8; counter <= i; counter +=8)
+				{
+					expected = (expected << 8) + buffer[(offset+counter)/8-1];
+				}
+				BOOST_CHECK(value == expected);
+			}
+			{
+				auto value = h->ReadD(&buffer[0],sizeof(buffer));
+				unsigned long long expected = 0;
+				for (int counter = 8; counter <= i; counter +=8)
+				{
+					expected = (expected << 8) + buffer[(offset+counter)/8-1];
+				}
+				BOOST_CHECK(value == expected);
+			}
+			if (i<=32)
+			{
+				{
+				auto value = h->ReadUL(&buffer[0],sizeof(buffer));
+				unsigned long long expected = 0;
+				for (int counter = 8; counter <= i; counter +=8)
+				{
+					expected = (expected << 8) + buffer[(offset+counter)/8-1];
+				}
+				BOOST_CHECK(value == expected);
+				}
+				{
+					auto value = h->ReadL(&buffer[0],sizeof(buffer));
+					long long expected = 0;
+					for (int counter = 8; counter <= i; counter +=8)
+					{
+						expected = (expected << 8) + buffer[(offset+counter)/8-1];
+					}
+					BOOST_CHECK(value == expected);
+				}
+			}
+			if (i<=16)
+			{
+				{
+					auto value = h->ReadF(&buffer[0],sizeof(buffer));
+					long long expected = 0;
+					for (int counter = 8; counter <= i; counter +=8)
+					{
+						expected = (expected << 8) + buffer[(offset+counter)/8-1];
+					}
+					BOOST_CHECK(value == expected);
+				}
+			}
+		}
+	}
+}
+
 BOOST_AUTO_TEST_CASE(alignedAccessTestUILE8Bit)
 {
 	unsigned char buffer[10] = { 0,1,2,3,4,5,6,7,8,9};
