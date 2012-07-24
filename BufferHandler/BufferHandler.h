@@ -131,7 +131,7 @@ public:
 	virtual long ReadL(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
 	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
 	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }	
 };
 
 template <typename T, typename intermediateType, typename swapPolicy>
@@ -215,6 +215,33 @@ public:
 	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { return static_cast<float>(ReadBit(buffer, bufferSize)); }
 	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { return static_cast<double>(ReadBit(buffer, bufferSize)); }
 	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { return static_cast<bool>(ReadBit(buffer, bufferSize)); }
+};
+
+template <typename srctype>
+class GenericHandler : public DataHandler
+{
+private:
+	unsigned int m_byteOffset;
+	unsigned int m_bitOffset;
+
+public:
+	virtual ~GenericHandler() {}
+
+	virtual void WriteULL(unsigned long long value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual void WriteLL(long long value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual void WriteUL(unsigned long value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual void WriteL(long value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual void WriteF(float value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	
+	virtual unsigned long long ReadULL(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual long long ReadLL(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual unsigned long ReadUL(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual long ReadL(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
 };
 
 /**
