@@ -33,7 +33,8 @@ either expressed or implied, of the FreeBSD Project.
 #include <stdexcept>
 #include <cassert>
 #include <boost/smart_ptr.hpp>
-#include <boost\cstdint.hpp>
+#include <boost/cstdint.hpp>
+#include <boost/static_assert.hpp>
 
 #pragma warning( push )
 #pragma warning( disable : 4800) //disable warning "forcing value to bool 'true' or 'false' (performance warning)
@@ -136,6 +137,8 @@ public:
 template <typename T, typename intermediateType, typename swapPolicy>
 class AlignedDataHandler : public DataHandler
 {
+	BOOST_STATIC_ASSERT(sizeof(T)==sizeof(intermediateType));
+
 	unsigned int m_startByteOffset;
 
 	T ReadData(unsigned char* buffer, size_t bufferSize);
