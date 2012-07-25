@@ -136,3 +136,4 @@ boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsign
 	//default implementation - does only throw exceptions.
 	return boost::shared_ptr<DataHandler>(new DataHandler());
 }
+

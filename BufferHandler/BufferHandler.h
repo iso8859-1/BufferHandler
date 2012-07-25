@@ -217,15 +217,25 @@ public:
 	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { return static_cast<bool>(ReadBit(buffer, bufferSize)); }
 };
 
-template <typename srctype>
-class GenericHandler : public DataHandler
+/**
+	This is the slowest possible implementation for reading. Reads using memcopy - this should always work. Should be taken as seldom as possible.
+*/
+template<typename internalBufferType>
+class GenericIntegerHandler : public DataHandler
 {
 private:
 	unsigned int m_byteOffset;
 	unsigned int m_bitOffset;
+	unsigned int m_bytesToCopy;
+
+	internalBufferType m_mask;
+
+	internalBufferType Read(unsigned char* buffer, size_t bufferSize);
+	void Write(internalBufferType value, unsigned char* buffer, size_t bufferSize);
 
 public:
-	virtual ~GenericHandler() {}
+	GenericIntegerHandler(unsigned int startBit, unsigned int bitSize);
+	virtual ~GenericIntegerHandler() {}
 
 	virtual void WriteULL(unsigned long long value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
 	virtual void WriteLL(long long value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
@@ -235,13 +245,13 @@ public:
 	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
 	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
 	
-	virtual unsigned long long ReadULL(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual long long ReadLL(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual unsigned long ReadUL(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual long ReadL(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual unsigned long long ReadULL(unsigned char* buffer, size_t bufferSize) { return static_cast<unsigned long long>(Read(buffer,bufferSize)); }
+	virtual long long ReadLL(unsigned char* buffer, size_t bufferSize) { return static_cast<long long>(Read(buffer,bufferSize)); }
+	virtual unsigned long ReadUL(unsigned char* buffer, size_t bufferSize) { return static_cast<unsigned long>(Read(buffer,bufferSize)); }
+	virtual long ReadL(unsigned char* buffer, size_t bufferSize) { return static_cast<long>(Read(buffer,bufferSize)); }
+	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { return static_cast<float>(Read(buffer,bufferSize)); }
+	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { return static_cast<double>(Read(buffer,bufferSize));}
+	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { return static_cast<bool>(Read(buffer,bufferSize)); }
 };
 
 /**
@@ -268,6 +278,15 @@ T AlignedDataHandler<T,intermediateType,swapPolicy>::ReadData(unsigned char* buf
 	intermediateType tmp = *reinterpret_cast<intermediateType*>(buffer+m_startByteOffset);
 	intermediateType result = swapPolicy::Swap(tmp);
 	return *reinterpret_cast<T*>(&result);
+}
+
+template<typename internalBufferType>
+GenericIntegerHandler<internalBufferType>::GenericIntegerHandler(unsigned int startBit, unsigned int bitSize)
+	: m_byteOffset(startBit / 8)
+	, m_bitOffset(startBit % 8)
+	, m_bytesToCopy( (bitSize+7)/8 )
+{
+	assert(m_bytesToCopy <= sizeof(internalBufferType));
 }
 
 #pragma warning( pop )
