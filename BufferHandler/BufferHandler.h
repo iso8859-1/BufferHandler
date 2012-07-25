@@ -55,23 +55,35 @@ enum DataType
 //Endian swap functions
 inline boost::uint16_t Swap16(boost::uint16_t src)
 {
+#if (_MSC_VER >= 1400)
+	return _byteswap_ushort(src);
+#else
 	return src << 8 | src >> 8;
+#endif
 }
 inline boost::uint32_t Swap32(boost::uint32_t src)
 {
+#if (_MSC_VER >= 1400)
+	return _byteswap_ulong(src);
+#else
 	boost::uint32_t result = src << 16 | src >> 16;
 	boost::uint32_t mask = 0xFF00FF00;
 	result = ((result << 8) & mask) | ((result & mask) >> 8);
 	return result;
+#endif
 }
 inline boost::uint64_t Swap64(boost::uint64_t src)
 {
+#if (_MSC_VER >= 1400)
+	return _byteswap_uint64(src);
+#else
 	boost::uint64_t result = src << 32 | src >> 32;
 	boost::uint64_t mask = 0xFFFF0000FFFF0000;
 	result = ((result << 16) & mask) | ((result & mask) >> 16);
 	mask = 0xFF00FF00FF00FF00;
 	result = ((result << 8) & mask) | ((result & mask) >> 8);
 	return result;
+#endif
 }
 
 template<typename SwapSize>
