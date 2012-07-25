@@ -229,11 +229,34 @@ public:
 	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { return static_cast<bool>(ReadBit(buffer, bufferSize)); }
 };
 
+template<typename T>
+struct SignExtensionPolicyNone
+{
+	SignExtensionPolicyNone(unsigned int bitSize) { }
+	T extend(T value) { return T; }
+};
+
+template<typename T>
+struct SignExtensionPolicyExtend
+{
+	T mask;
+	SignExtensionPolicyExtend(unsigned int bitSize) 
+	{
+		mask = (~0) << bitSize-1; //create a mask that contains only 1 except for the lowest bitSize-1 bits
+	}
+	T extend(T value) 
+	{
+		//check whether the sign bit is set using the mask. If it is set, set all bits except for the lowest bitSize-1
+		//this is sufficient since we know that the bit at position bitSize (sign bit) is equal to 1
+		return T & mask ? T | mask : T; 
+	}
+};
+
 /**
 	This is the slowest possible implementation for reading. Reads using memcopy - this should always work. Should be taken as seldom as possible.
 */
-template<typename internalBufferType>
-class GenericIntegerHandler : public DataHandler
+template<typename internalBufferType, typename endianessPolicy, typename signPolicy>
+class GenericIntegerHandler : public DataHandler, private endianessPolicy, private signPolicy
 {
 private:
 	unsigned int m_byteOffset;
@@ -292,13 +315,34 @@ T AlignedDataHandler<T,intermediateType,swapPolicy>::ReadData(unsigned char* buf
 	return *reinterpret_cast<T*>(&result);
 }
 
-template<typename internalBufferType>
-GenericIntegerHandler<internalBufferType>::GenericIntegerHandler(unsigned int startBit, unsigned int bitSize)
-	: m_byteOffset(startBit / 8)
+template<typename internalBufferType, typename endianessPolicy, typename signPolicy>
+GenericIntegerHandler<internalBufferType,endianessPolicy,signPolicy>::GenericIntegerHandler(unsigned int startBit, unsigned int bitSize)
+	: signPolicy(bitSize)
+	, m_byteOffset(startBit / 8)
 	, m_bitOffset(startBit % 8)
 	, m_bytesToCopy( (bitSize+7)/8 )
 {
 	assert(m_bytesToCopy <= sizeof(internalBufferType));
+}
+template<typename internalBufferType, typename endianessPolicy, typename signPolicy>
+internalBufferType GenericIntegerHandler<internalBufferType,endianessPolicy,signPolicy>::Read(unsigned char* buffer, size_t bufferSize)
+{
+	//coyp into internal buffer
+	internalBufferType result = 0;
+	memcpy(&result,buffer,sizeof(result));
+	//align (right if LE, left if BE)
+
+	//apply mask (depending on alignment)
+
+	//swap if necessary
+
+	//sign extension if necessary
+}
+
+template<typename internalBufferType, typename endianessPolicy, typename signPolicy>
+void GenericIntegerHandler<internalBufferType,endianessPolicy,signPolicy>::Write(internalBufferType value, unsigned char* buffer, size_t bufferSize)
+{
+
 }
 
 #pragma warning( pop )
