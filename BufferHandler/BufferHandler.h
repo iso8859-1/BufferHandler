@@ -262,9 +262,9 @@ struct EndianessPolicyNoSwap
 		: shift(startBit % 8)
 		, mask( ~((~0) << (bitSize)))
 	{ }
-	T Align(T value){ return T >> shift; }
-	T ApplyMask(T value) { return T & mask; }
-	T Swap(T value) { return T; }
+	T Align(T value){ return value >> shift; }
+	T ApplyMask(T value) { return value & mask; }
+	T Swap(T value) { return value; }
 };
 
 template<typename T>
@@ -277,10 +277,16 @@ struct EndianessPolicySwap
 		: shift( 8 - ((startBit+bitSize) % 8) )
 		, mask( ~((~0) >> (bitSize)))
 	{}
-	T Align(T value){}
-	T ApplyMask(T value) {}
+	T Align(T value){ return value << shift; }
+	T ApplyMask(T value) { return value & mask; }
 	T Swap(T value);
 };
+
+template<>
+inline boost::uint8_t EndianessPolicySwap<boost::uint8_t>::Swap(boost::uint8_t value)
+{
+	return value;
+}
 
 template<>
 inline boost::uint16_t EndianessPolicySwap<boost::uint16_t>::Swap(boost::uint16_t value)
@@ -334,13 +340,41 @@ public:
 	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
 	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
 	
-	virtual unsigned long long ReadULL(unsigned char* buffer, size_t bufferSize) { return static_cast<unsigned long long>(Read(buffer,bufferSize)); }
-	virtual long long ReadLL(unsigned char* buffer, size_t bufferSize) { return static_cast<long long>(Read(buffer,bufferSize)); }
-	virtual unsigned long ReadUL(unsigned char* buffer, size_t bufferSize) { return static_cast<unsigned long>(Read(buffer,bufferSize)); }
-	virtual long ReadL(unsigned char* buffer, size_t bufferSize) { return static_cast<long>(Read(buffer,bufferSize)); }
-	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { return static_cast<float>(Read(buffer,bufferSize)); }
-	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { return static_cast<double>(Read(buffer,bufferSize));}
-	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { return static_cast<bool>(Read(buffer,bufferSize)); }
+	virtual unsigned long long ReadULL(unsigned char* buffer, size_t bufferSize) 
+	{ 
+		internalBufferType result = Read(buffer,bufferSize);
+		return static_cast<unsigned long long>(result); 
+	}
+	virtual long long ReadLL(unsigned char* buffer, size_t bufferSize) 
+	{ 
+		internalBufferType result = Read(buffer,bufferSize);
+		return static_cast<long long>(result); 
+	}
+	virtual unsigned long ReadUL(unsigned char* buffer, size_t bufferSize) 
+	{ 
+		internalBufferType result = Read(buffer,bufferSize);
+		return static_cast<unsigned long>(result); 
+	}
+	virtual long ReadL(unsigned char* buffer, size_t bufferSize)
+	{ 
+		internalBufferType result = Read(buffer,bufferSize);
+		return static_cast<long>(result); 
+	}
+	virtual float ReadF(unsigned char* buffer, size_t bufferSize)
+	{ 
+		internalBufferType result = Read(buffer,bufferSize);
+		return static_cast<float>(result); 
+	}
+	virtual double ReadD(unsigned char* buffer, size_t bufferSize)
+	{ 
+		internalBufferType result = Read(buffer,bufferSize);
+		return static_cast<double>(result); 
+	}
+	virtual bool ReadB(unsigned char* buffer, size_t bufferSize)
+	{ 
+		internalBufferType result = Read(buffer,bufferSize);
+		return static_cast<bool>(result); 
+	}
 };
 
 /**
@@ -385,13 +419,13 @@ internalBufferType GenericIntegerHandler<internalBufferType,endianessPolicy,sign
 	internalBufferType result = 0;
 	memcpy(&result,buffer,sizeof(result));
 	//align (right if LE, left if BE)
-
+	result = Align(result);
 	//apply mask (depending on alignment)
-
+	result = Mask(result);
 	//swap if necessary
-
+	result = Swap(result);
 	//sign extension if necessary
-	return Extend(T);
+	return Extend(result);
 }
 
 template<typename internalBufferType, typename endianessPolicy, typename signPolicy>

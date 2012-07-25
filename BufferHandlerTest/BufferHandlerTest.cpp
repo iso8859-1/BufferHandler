@@ -64,6 +64,25 @@ BOOST_AUTO_TEST_CASE ( Swap64Test )
 
 #pragma region Policy Tests
 
+BOOST_AUTO_TEST_CASE(EndianessPolicyNoSwapTest)
+{
+	{
+		EndianessPolicyNoSwap<boost::uint32_t> policy(7,8);
+		boost::uint32_t value = 0x7F80; // 111111110000000 //8 1s shifted by 7 to the left
+		auto result = policy.Align(value);
+		BOOST_CHECK(result == 0xFF);
+	}
+	{
+		EndianessPolicyNoSwap<boost::uint32_t> policy(7,8);
+		boost::uint32_t value = 0xFFFFFFFF; // 8 1s hidden inside 4 bytes of 1s
+		auto result = policy.Align(value);
+		result = policy.ApplyMask(value);
+		BOOST_CHECK(result == 0xFF);
+		result = policy.Swap(result);
+		BOOST_CHECK(result == 0xFF);
+	}
+}
+
 BOOST_AUTO_TEST_CASE(SignExtensionPolicyExtendTest)
 {
 	SignExtensionPolicyExtend<boost::uint32_t> policy(15);
