@@ -233,24 +233,78 @@ template<typename T>
 struct SignExtensionPolicyNone
 {
 	SignExtensionPolicyNone(unsigned int bitSize) { }
-	T extend(T value) { return T; }
+	T Extend(T value) { return value; }
 };
 
 template<typename T>
 struct SignExtensionPolicyExtend
 {
 	T mask;
-	SignExtensionPolicyExtend(unsigned int bitSize) 
+	SignExtensionPolicyExtend(unsigned int bitSize) : mask( (~0) << (bitSize-1) )
 	{
-		mask = (~0) << bitSize-1; //create a mask that contains only 1 except for the lowest bitSize-1 bits
+		//create a mask that contains only 1 except for the lowest bitSize-1 bits
 	}
-	T extend(T value) 
+	T Extend(T value) 
 	{
 		//check whether the sign bit is set using the mask. If it is set, set all bits except for the lowest bitSize-1
 		//this is sufficient since we know that the bit at position bitSize (sign bit) is equal to 1
-		return T & mask ? T | mask : T; 
+		return value & mask ? value | mask : value; 
 	}
 };
+
+template<typename T>
+struct EndianessPolicyNoSwap
+{
+	unsigned int shift;
+	T mask;
+
+	EndianessPolicyNoSwap(unsigned int startBit, unsigned int bitSize) 
+		: shift(startBit % 8)
+		, mask( ~((~0) << (bitSize)))
+	{ }
+	T Align(T value){ return T >> shift; }
+	T ApplyMask(T value) { return T & mask; }
+	T Swap(T value) { return T; }
+};
+
+template<typename T>
+struct EndianessPolicySwap
+{
+	unsigned int shift;
+	T mask;
+
+	EndianessPolicySwap(unsigned int startBit, unsigned int bitSize) 
+		: shift( 8 - ((startBit+bitSize) % 8) )
+		, mask( ~((~0) >> (bitSize)))
+	{}
+	T Align(T value){}
+	T ApplyMask(T value) {}
+	T Swap(T value);
+};
+
+template<>
+inline boost::uint16_t EndianessPolicySwap<boost::uint16_t>::Swap(boost::uint16_t value)
+{
+	return Swap16(value);
+}
+
+template<>
+inline boost::uint32_t EndianessPolicySwap<boost::uint32_t>::Swap(boost::uint32_t value)
+{
+	return Swap32(value);
+}
+
+template<>
+inline boost::uint64_t EndianessPolicySwap<boost::uint64_t>::Swap(boost::uint64_t value)
+{
+	return Swap64(value);
+}
+
+template<typename T>
+inline T EndianessPolicySwap<T>::Swap(T value)
+{
+	throw std::logic_error("swaping not implemented");
+}
 
 /**
 	This is the slowest possible implementation for reading. Reads using memcopy - this should always work. Should be taken as seldom as possible.
@@ -337,6 +391,7 @@ internalBufferType GenericIntegerHandler<internalBufferType,endianessPolicy,sign
 	//swap if necessary
 
 	//sign extension if necessary
+	return Extend(T);
 }
 
 template<typename internalBufferType, typename endianessPolicy, typename signPolicy>

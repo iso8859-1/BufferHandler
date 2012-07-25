@@ -62,6 +62,47 @@ BOOST_AUTO_TEST_CASE ( Swap64Test )
 }
 #pragma endregion
 
+#pragma region Policy Tests
+
+BOOST_AUTO_TEST_CASE(SignExtensionPolicyExtendTest)
+{
+	SignExtensionPolicyExtend<boost::uint32_t> policy(15);
+
+	{
+		boost::uint32_t value = 0x7FFF;
+		auto extended = policy.Extend(value);
+		BOOST_CHECK(extended == 0xFFFFFFFF);
+	}
+
+	{
+		boost::uint32_t value = 0x3FFF;
+		auto extended = policy.Extend(value);
+		BOOST_CHECK(extended == 0x3FFF);
+	}
+
+	
+}
+
+BOOST_AUTO_TEST_CASE(SignExtensionPolicyNoneTest)
+{
+	SignExtensionPolicyNone<boost::uint32_t> policy(15);
+
+	{
+		boost::uint32_t value = 0x7FFF;
+		auto extended = policy.Extend(value);
+		BOOST_CHECK(extended == 0x7FFF);
+	}
+
+	{
+		boost::uint32_t value = 0x3FFF;
+		auto extended = policy.Extend(value);
+		BOOST_CHECK(extended == 0x3FFF);
+	}
+}
+
+
+#pragma endregion
+
 #pragma region Reading Tests
 #pragma region Lower Boundary Tests
 BOOST_AUTO_TEST_CASE(accessLowerBoundaryTest8UILE)
