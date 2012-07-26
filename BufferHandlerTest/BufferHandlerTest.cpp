@@ -450,6 +450,25 @@ BOOST_AUTO_TEST_CASE( bitAccess )
 	}
 }
 #pragma endregion
+#pragma region Zero Bit Tests
+
+BOOST_AUTO_TEST_CASE( ZeroBitAccess )
+{
+	boost::uint64_t buffer = 0xFFFFFFFFFFFFFFFF;
+
+	auto h = CreateBufferHandler(12,0,SignedIntegerBigEndian);
+
+	BOOST_CHECK(false == h->ReadB(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
+	BOOST_CHECK(0 == h->ReadD(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
+	BOOST_CHECK(0 == h->ReadF(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
+	BOOST_CHECK(0 == h->ReadL(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
+	BOOST_CHECK(0 == h->ReadUL(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
+	BOOST_CHECK(0 == h->ReadLL(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
+	BOOST_CHECK(0 == h->ReadULL(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
+}
+
+
+#pragma endregion
 #pragma endregion
 
 #pragma region Writing Tests

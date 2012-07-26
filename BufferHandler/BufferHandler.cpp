@@ -121,7 +121,11 @@ boost::shared_ptr<DataHandler> CreateAlignedDataHandler(unsigned int startbit, u
 
 boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsigned int sizeInBits, DataType type)
 {
-	if (sizeInBits == 1)
+	if (sizeInBits == 0)
+	{
+		return boost::shared_ptr<ZeroDataHandler>(new ZeroDataHandler());
+	}
+	else if (sizeInBits == 1)
 	{
 		return boost::shared_ptr<BitDataHandler>(new BitDataHandler(startbit));
 	}

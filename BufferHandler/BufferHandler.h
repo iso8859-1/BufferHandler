@@ -179,6 +179,29 @@ public:
 	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { return static_cast<bool>(ReadData(buffer, bufferSize)); }
 };
 
+class ZeroDataHandler : public DataHandler
+{
+public:
+	ZeroDataHandler() {}
+	~ZeroDataHandler() {}
+
+	virtual void WriteULL(unsigned long long value, unsigned char* buffer, size_t bufferSize) { }
+	virtual void WriteLL(long long value, unsigned char* buffer, size_t bufferSize)  { }
+	virtual void WriteUL(unsigned long value, unsigned char* buffer, size_t bufferSize)  { }
+	virtual void WriteL(long value, unsigned char* buffer, size_t bufferSize)  { }
+	virtual void WriteF(float value, unsigned char* buffer, size_t bufferSize)  { }
+	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize)  { }
+	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize)  { }
+	
+	virtual unsigned long long ReadULL(unsigned char* buffer, size_t bufferSize) { return static_cast<unsigned long long>(0); }
+	virtual long long ReadLL(unsigned char* buffer, size_t bufferSize) { return static_cast<long long>(0); }
+	virtual unsigned long ReadUL(unsigned char* buffer, size_t bufferSize){ return static_cast<unsigned long>(0); }
+	virtual long ReadL(unsigned char* buffer, size_t bufferSize) { return static_cast<long>(0); }
+	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { return static_cast<float>(0); }
+	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { return static_cast<double>(0); }
+	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { return static_cast<bool>(0); }
+};
+
 class BitDataHandler : public DataHandler
 {
 	unsigned int m_startByteOffset;
