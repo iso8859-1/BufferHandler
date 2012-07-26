@@ -35,6 +35,68 @@ either expressed or implied, of the FreeBSD Project.
 #include <boost/smart_ptr.hpp>
 #include "BufferHandler.h"
 
+#pragma region Helper Classes
+
+class TestBuffer
+{
+	static unsigned char mask[8];
+	
+	size_t m_size;
+	boost::scoped_array<unsigned char> m_buffer;
+
+public:
+	TestBuffer(size_t size) 
+		: m_size(size)
+		, m_buffer(new unsigned char[size])
+	{}
+
+	unsigned char* GetBuffer() { return m_buffer.get(); }
+
+	void ClearBuffer() { memset(m_buffer.get(),0,m_size);}
+
+	void SetBit(unsigned int bitNumber)
+	{
+		size_t noByte = bitNumber / 8;
+		unsigned int maskNumber = bitNumber % 8;
+		if (noByte>=m_size)
+		{
+			throw std::invalid_argument("index too large");
+		}
+		m_buffer[noByte] |= mask[maskNumber];
+	}
+
+	void SetBits(unsigned int bitStart, unsigned int bitStop)
+	{
+		for (unsigned int i=bitStart; i<=bitStop; ++i)
+		{
+			SetBit(i);
+		}
+	}
+
+	void ClearBit(unsigned int bitNumber)
+	{
+		size_t noByte = bitNumber / 8;
+		unsigned int maskNumber = bitNumber % 8;
+		if (noByte>=m_size)
+		{
+			throw std::invalid_argument("index too large");
+		}
+		m_buffer[noByte] &= ~mask[maskNumber];
+	}
+
+	void ClearBits(unsigned int bitStart, unsigned int bitStop)
+	{
+		for (unsigned int i=bitStart; i<=bitStop; ++i)
+		{
+			ClearBit(i);
+		}
+	}
+};
+
+unsigned char TestBuffer::mask[8] = { 1, 2, 4, 8, 16, 32, 64, 128 };
+
+#pragma endregion
+
 #pragma region EndianSwap Tests
 BOOST_AUTO_TEST_CASE ( Swap16Test )
 {

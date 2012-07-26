@@ -129,21 +129,21 @@ Interface class to read & write from a buffer
 class DataHandler
 {
 public:
-	virtual void WriteULL(unsigned long long value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteLL(long long value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteUL(unsigned long value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteL(long value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteF(float value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual void WriteULL(unsigned long long , unsigned char* , size_t ) { throw std::logic_error("not implemented"); }
+	virtual void WriteLL(long long , unsigned char* , size_t ) { throw std::logic_error("not implemented"); }
+	virtual void WriteUL(unsigned long , unsigned char* , size_t ) { throw std::logic_error("not implemented"); }
+	virtual void WriteL(long , unsigned char* , size_t ) { throw std::logic_error("not implemented"); }
+	virtual void WriteF(float , unsigned char* , size_t ) { throw std::logic_error("not implemented"); }
+	virtual void WriteD(double , unsigned char* , size_t ) { throw std::logic_error("not implemented"); }
+	virtual void WriteB(bool , unsigned char* , size_t ) { throw std::logic_error("not implemented"); }
 	
-	virtual unsigned long long ReadULL(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual long long ReadLL(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual unsigned long ReadUL(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual long ReadL(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }	
+	virtual unsigned long long ReadULL(unsigned char* , size_t ) { throw std::logic_error("not implemented"); }
+	virtual long long ReadLL(unsigned char* , size_t ) { throw std::logic_error("not implemented"); }
+	virtual unsigned long ReadUL(unsigned char* , size_t ) { throw std::logic_error("not implemented"); }
+	virtual long ReadL(unsigned char* , size_t ) { throw std::logic_error("not implemented"); }
+	virtual float ReadF(unsigned char* , size_t ) { throw std::logic_error("not implemented"); }
+	virtual double ReadD(unsigned char* , size_t ) { throw std::logic_error("not implemented"); }
+	virtual bool ReadB(unsigned char* , size_t ) { throw std::logic_error("not implemented"); }	
 };
 
 template <typename T, typename intermediateType, typename swapPolicy>
@@ -185,21 +185,21 @@ public:
 	ZeroDataHandler() {}
 	~ZeroDataHandler() {}
 
-	virtual void WriteULL(unsigned long long value, unsigned char* buffer, size_t bufferSize) { }
-	virtual void WriteLL(long long value, unsigned char* buffer, size_t bufferSize)  { }
-	virtual void WriteUL(unsigned long value, unsigned char* buffer, size_t bufferSize)  { }
-	virtual void WriteL(long value, unsigned char* buffer, size_t bufferSize)  { }
-	virtual void WriteF(float value, unsigned char* buffer, size_t bufferSize)  { }
-	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize)  { }
-	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize)  { }
+	virtual void WriteULL(unsigned long long , unsigned char* , size_t ) { }
+	virtual void WriteLL(long long , unsigned char* , size_t )  { }
+	virtual void WriteUL(unsigned long , unsigned char* , size_t )  { }
+	virtual void WriteL(long , unsigned char* , size_t )  { }
+	virtual void WriteF(float , unsigned char* , size_t )  { }
+	virtual void WriteD(double , unsigned char* , size_t )  { }
+	virtual void WriteB(bool , unsigned char* , size_t )  { }
 	
-	virtual unsigned long long ReadULL(unsigned char* buffer, size_t bufferSize) { return static_cast<unsigned long long>(0); }
-	virtual long long ReadLL(unsigned char* buffer, size_t bufferSize) { return static_cast<long long>(0); }
-	virtual unsigned long ReadUL(unsigned char* buffer, size_t bufferSize){ return static_cast<unsigned long>(0); }
-	virtual long ReadL(unsigned char* buffer, size_t bufferSize) { return static_cast<long>(0); }
-	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { return static_cast<float>(0); }
-	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { return static_cast<double>(0); }
-	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { return static_cast<bool>(0); }
+	virtual unsigned long long ReadULL(unsigned char* , size_t ) { return static_cast<unsigned long long>(0); }
+	virtual long long ReadLL(unsigned char* , size_t ) { return static_cast<long long>(0); }
+	virtual unsigned long ReadUL(unsigned char* , size_t ){ return static_cast<unsigned long>(0); }
+	virtual long ReadL(unsigned char* , size_t ) { return static_cast<long>(0); }
+	virtual float ReadF(unsigned char* , size_t ) { return static_cast<float>(0); }
+	virtual double ReadD(unsigned char* , size_t ) { return static_cast<double>(0); }
+	virtual bool ReadB(unsigned char* , size_t ) { return static_cast<bool>(0); }
 };
 
 class BitDataHandler : public DataHandler
@@ -209,11 +209,11 @@ class BitDataHandler : public DataHandler
 	unsigned char m_readMask;
 	unsigned char m_writeMask;
 
-	bool ReadBit(unsigned char* buffer, size_t bufferSize)
+	bool ReadBit(unsigned char* buffer, size_t )
 	{
 		return ((*reinterpret_cast<unsigned char*>(buffer+m_startByteOffset)) & m_readMask) != 0;
 	}
-	void WriteBit(bool value, unsigned char* buffer, size_t bufferSize)
+	void WriteBit(bool value, unsigned char* buffer, size_t )
 	{
 		if (value)
 		{
@@ -255,7 +255,7 @@ public:
 template<typename T>
 struct SignExtensionPolicyNone
 {
-	SignExtensionPolicyNone(unsigned int bitSize) { }
+	SignExtensionPolicyNone(unsigned int ) { }
 	T Extend(T value) { return value; }
 };
 
@@ -300,7 +300,7 @@ struct EndianessPolicySwap
 		: shift( sizeof(T)*8 - ((startBit%8)+bitSize)  )
 		, mask( 0 )
 	{
-		mask = ~0;
+		mask = ~static_cast<boost::uint32_t>(0);
 		mask >>= bitSize;
 		mask = ~ mask;
 	}
