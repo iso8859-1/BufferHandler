@@ -274,9 +274,13 @@ struct EndianessPolicySwap
 	T mask;
 
 	EndianessPolicySwap(unsigned int startBit, unsigned int bitSize) 
-		: shift( 8 - ((startBit+bitSize) % 8) )
-		, mask( ~((~0) >> (bitSize)))
-	{}
+		: shift( sizeof(T)*8 - ((startBit%8)+bitSize)  )
+		, mask( 0 )
+	{
+		mask = ~0;
+		mask >>= bitSize;
+		mask = ~ mask;
+	}
 	T Align(T value){ return value << shift; }
 	T ApplyMask(T value) { return value & mask; }
 	T Swap(T value);
