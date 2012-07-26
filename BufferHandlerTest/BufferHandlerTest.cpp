@@ -568,7 +568,9 @@ BOOST_AUTO_TEST_CASE(alignedWritingTestUILE8Bit)
 
 BOOST_AUTO_TEST_CASE(alignedWritingTestSILE8Bit)
 {
+#pragma warning ( push, 3 ) //set warning level to 3 for the following declaration
 	unsigned char buffer[10] = { 0,-1,2,3,4,5,6,7,8,9};
+#pragma warning ( pop )
 	auto h = CreateBufferHandler(8,8,SignedIntegerLittleEndian);
 
 	{
