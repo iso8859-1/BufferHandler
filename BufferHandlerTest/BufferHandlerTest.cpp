@@ -531,6 +531,35 @@ BOOST_AUTO_TEST_CASE( ZeroBitAccess )
 
 
 #pragma endregion
+#pragma region Generic Bit Pattern Test
+BOOST_AUTO_TEST_CASE ( GenericBitPatternTest )
+{
+	const int bufferSizeInBytes = 9;
+	for (int i=1; i<=64; ++i) //loop through all numbers of bits
+	{
+		for (int k=0; k<bufferSizeInBytes*8-i; ++k)
+		{
+			TestBuffer buffer(bufferSizeInBytes);
+			buffer.ClearBuffer();
+			buffer.SetBits(k,k+i-1);
+
+			auto h = CreateBufferHandler(k,i,UnsignedIntegerLittleEndian);
+
+			unsigned long long expected = 0;
+			for (int l = 0; l<i; ++l)
+			{
+				expected <<= 1;
+				expected |= 1;
+			}
+
+			{
+				auto result = h->ReadULL(buffer.GetBuffer(),bufferSizeInBytes);
+				BOOST_CHECK(result == expected);
+			}
+
+		}
+	}
+}
 #pragma endregion
 
 #pragma region Writing Tests

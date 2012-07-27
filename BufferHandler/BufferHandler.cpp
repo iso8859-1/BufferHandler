@@ -129,13 +129,37 @@ boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsign
 	{
 		return boost::shared_ptr<BitDataHandler>(new BitDataHandler(startbit));
 	}
-	try
+	else if ((sizeInBits == 8 || sizeInBits == 16 || sizeInBits == 32 || sizeInBits ==64) && startbit % 8 == 0)
 	{
-		return CreateAlignedDataHandler(startbit, sizeInBits, type);
-	} 
-	catch(const std::logic_error&)
+		try
+		{
+			return CreateAlignedDataHandler(startbit, sizeInBits, type);
+		} 
+		catch(const std::logic_error&)
+		{
+			//try next handler type
+		}
+	}
+	else
 	{
-		//try next handler type
+		switch (type)
+		{
+		case (UnsignedIntegerLittleEndian):
+			{
+				if (sizeInBits+(startbit%8)<=32)
+				{
+					typedef GenericIntegerHandler<boost::uint32_t,EndianessPolicyNoSwap<boost::uint32_t>,SignExtensionPolicyNone<boost::uint32_t>> Handler;
+					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+				else
+				{
+					typedef GenericIntegerHandler<boost::uint64_t,EndianessPolicyNoSwap<boost::uint64_t>,SignExtensionPolicyNone<boost::uint64_t>> Handler;
+					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+			}
+		default:
+			return boost::shared_ptr<DataHandler>(new DataHandler());
+		}
 	}
 	//default implementation - does only throw exceptions.
 	return boost::shared_ptr<DataHandler>(new DataHandler());

@@ -283,8 +283,12 @@ struct EndianessPolicyNoSwap
 
 	EndianessPolicyNoSwap(unsigned int startBit, unsigned int bitSize) 
 		: shift(startBit % 8)
-		, mask( ~((~0) << (bitSize)))
-	{ }
+		, mask( 0 )
+	{
+		mask = ~static_cast<T>(0);
+		mask <<= bitSize;
+		mask = ~mask;
+	}
 	T Align(T value){ return value >> shift; }
 	T InverseAlign(T value) { return value << shift; }
 	T ApplyMask(T value) { return value & mask; }
@@ -301,7 +305,7 @@ struct EndianessPolicySwap
 		: shift( sizeof(T)*8 - ((startBit%8)+bitSize)  )
 		, mask( 0 )
 	{
-		mask = ~static_cast<boost::uint32_t>(0);
+		mask = ~static_cast<T>(0);
 		mask >>= bitSize;
 		mask = ~ mask;
 	}
@@ -351,8 +355,6 @@ private:
 	unsigned int m_byteOffset;
 	unsigned int m_bitOffset;
 	unsigned int m_bytesToCopy;
-
-	internalBufferType m_mask;
 
 	internalBufferType Read(unsigned char* buffer, size_t bufferSize);
 	void Write(internalBufferType value, unsigned char* buffer, size_t bufferSize);
@@ -434,10 +436,10 @@ T AlignedDataHandler<T,intermediateType,swapPolicy>::ReadData(unsigned char* buf
 
 template<typename internalBufferType, typename endianessPolicy, typename signPolicy>
 GenericIntegerHandler<internalBufferType,endianessPolicy,signPolicy>::GenericIntegerHandler(unsigned int startBit, unsigned int bitSize)
-	: signPolicy(bitSize)
+	: signPolicy(bitSize), endianessPolicy(startBit, bitSize)
 	, m_byteOffset(startBit / 8)
 	, m_bitOffset(startBit % 8)
-	, m_bytesToCopy( (bitSize+7)/8 )
+	, m_bytesToCopy( (bitSize+(startBit%8)+7)/8 )
 {
 	assert(m_bytesToCopy <= sizeof(internalBufferType));
 }
@@ -446,11 +448,11 @@ internalBufferType GenericIntegerHandler<internalBufferType,endianessPolicy,sign
 {
 	//coyp into internal buffer
 	internalBufferType result = 0;
-	memcpy(&result,buffer,m_bytesToCopy);
+	memcpy(&result,buffer+m_byteOffset,m_bytesToCopy);
 	//align (right if LE, left if BE)
 	result = Align(result);
 	//apply mask (depending on alignment)
-	result = Mask(result);
+	result = ApplyMask(result);
 	//swap if necessary
 	result = Swap(result);
 	//sign extension if necessary
@@ -463,13 +465,13 @@ void GenericIntegerHandler<internalBufferType,endianessPolicy,signPolicy>::Write
 	//swap if necessary
 	auto tmp = Swap(value);
 	//mask
-	tmp = Mask(tmp);
+	tmp = ApplyMask(tmp);
 	//align
 	tmp = InverseAlign(tmp);
 	//bytewise or into place
 	for (unsigned int i=0; i<m_bytesToCopy; ++i)
 	{
-		value[m_byteOffset+i] |= (reinterpret_cast<unsigned char*>(&tmp))[i];
+		buffer[m_byteOffset+i] |= (reinterpret_cast<unsigned char*>(&tmp))[i];
 	}
 }
 
