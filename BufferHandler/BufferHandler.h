@@ -286,6 +286,7 @@ struct EndianessPolicyNoSwap
 		, mask( ~((~0) << (bitSize)))
 	{ }
 	T Align(T value){ return value >> shift; }
+	T InverseAlign(T value) { return value << shift; }
 	T ApplyMask(T value) { return value & mask; }
 	T Swap(T value) { return value; }
 };
@@ -305,6 +306,7 @@ struct EndianessPolicySwap
 		mask = ~ mask;
 	}
 	T Align(T value){ return value << shift; }
+	T InverseAlign(T value) { return value << shift; }
 	T ApplyMask(T value) { return value & mask; }
 	T Swap(T value);
 };
@@ -444,7 +446,7 @@ internalBufferType GenericIntegerHandler<internalBufferType,endianessPolicy,sign
 {
 	//coyp into internal buffer
 	internalBufferType result = 0;
-	memcpy(&result,buffer,sizeof(result));
+	memcpy(&result,buffer,m_bytesToCopy);
 	//align (right if LE, left if BE)
 	result = Align(result);
 	//apply mask (depending on alignment)
@@ -458,7 +460,17 @@ internalBufferType GenericIntegerHandler<internalBufferType,endianessPolicy,sign
 template<typename internalBufferType, typename endianessPolicy, typename signPolicy>
 void GenericIntegerHandler<internalBufferType,endianessPolicy,signPolicy>::Write(internalBufferType value, unsigned char* buffer, size_t bufferSize)
 {
-
+	//swap if necessary
+	auto tmp = Swap(value);
+	//mask
+	tmp = Mask(tmp);
+	//align
+	tmp = InverseAlign(tmp);
+	//bytewise or into place
+	for (unsigned int i=0; i<m_bytesToCopy; ++i)
+	{
+		value[m_byteOffset+i] |= (reinterpret_cast<unsigned char*>(&tmp))[i];
+	}
 }
 
 #pragma warning( pop )
