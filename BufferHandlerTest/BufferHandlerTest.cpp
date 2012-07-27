@@ -539,6 +539,10 @@ BOOST_AUTO_TEST_CASE ( GenericBitPatternTest )
 	{
 		for (int k=0; k<bufferSizeInBytes*8-i; ++k)
 		{
+			if (i+k>64)
+			{
+				continue;
+			}
 			TestBuffer buffer(bufferSizeInBytes);
 			buffer.ClearBuffer();
 			buffer.SetBits(k,k+i-1);
