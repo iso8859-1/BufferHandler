@@ -148,12 +148,12 @@ boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsign
 			{
 				if (sizeInBits+(startbit%8)<=32)
 				{
-					typedef GenericIntegerHandler<boost::uint32_t,EndianessPolicyNoSwap<boost::uint32_t>,SignExtensionPolicyNone<boost::uint32_t>> Handler;
+					typedef GenericIntegerHandler<boost::uint32_t,boost::uint32_t,EndianessPolicyNoSwap<boost::uint32_t>,SignExtensionPolicyNone<boost::uint32_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 				else
 				{
-					typedef GenericIntegerHandler<boost::uint64_t,EndianessPolicyNoSwap<boost::uint64_t>,SignExtensionPolicyNone<boost::uint64_t>> Handler;
+					typedef GenericIntegerHandler<boost::uint64_t,boost::uint64_t,EndianessPolicyNoSwap<boost::uint64_t>,SignExtensionPolicyNone<boost::uint64_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 			}
@@ -161,12 +161,12 @@ boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsign
 			{
 				if (sizeInBits+(startbit%8)<=32)
 				{
-					typedef GenericIntegerHandler<boost::uint32_t,EndianessPolicySwap<boost::uint32_t>,SignExtensionPolicyNone<boost::uint32_t>> Handler;
+					typedef GenericIntegerHandler<boost::uint32_t,boost::uint32_t,EndianessPolicySwap<boost::uint32_t>,SignExtensionPolicyNone<boost::uint32_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 				else
 				{
-					typedef GenericIntegerHandler<boost::uint64_t,EndianessPolicySwap<boost::uint64_t>,SignExtensionPolicyNone<boost::uint64_t>> Handler;
+					typedef GenericIntegerHandler<boost::uint64_t,boost::uint64_t,EndianessPolicySwap<boost::uint64_t>,SignExtensionPolicyNone<boost::uint64_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 			}
@@ -174,12 +174,12 @@ boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsign
 			{
 				if (sizeInBits+(startbit%8)<=32)
 				{
-					typedef GenericIntegerHandler<boost::int32_t,EndianessPolicyNoSwap<boost::uint32_t>,SignExtensionPolicyExtend<boost::uint32_t>> Handler;
+					typedef GenericIntegerHandler<boost::int32_t,boost::int32_t,EndianessPolicyNoSwap<boost::uint32_t>,SignExtensionPolicyExtend<boost::uint32_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 				else
 				{
-					typedef GenericIntegerHandler<boost::int64_t,EndianessPolicyNoSwap<boost::uint64_t>,SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+					typedef GenericIntegerHandler<boost::int64_t,boost::int64_t,EndianessPolicyNoSwap<boost::uint64_t>,SignExtensionPolicyExtend<boost::uint64_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 			}
@@ -187,13 +187,55 @@ boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsign
 			{
 				if (sizeInBits+(startbit%8)<=32)
 				{
-					typedef GenericIntegerHandler<boost::int32_t,EndianessPolicySwap<boost::uint32_t>,SignExtensionPolicyExtend<boost::uint32_t>> Handler;
+					typedef GenericIntegerHandler<boost::int32_t,boost::int32_t,EndianessPolicySwap<boost::uint32_t>,SignExtensionPolicyExtend<boost::uint32_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 				else
 				{
-					typedef GenericIntegerHandler<boost::int64_t,EndianessPolicySwap<boost::uint64_t>,SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+					typedef GenericIntegerHandler<boost::int64_t,boost::int64_t,EndianessPolicySwap<boost::uint64_t>,SignExtensionPolicyExtend<boost::uint64_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+			}
+		case (FloatLittleEndian):
+			{
+				if (sizeInBits+(startbit%8)<=32)
+				{
+					typedef GenericIntegerHandler<boost::int32_t,float,EndianessPolicyNoSwap<boost::uint32_t>,SignExtensionPolicyExtend<boost::uint32_t>> Handler;
+					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+				else
+				{
+					if (sizeInBits == 32)
+					{
+						typedef GenericIntegerHandler<boost::int64_t,float,EndianessPolicyNoSwap<boost::uint64_t>,SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+						return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+					}
+					else
+					{
+						typedef GenericIntegerHandler<boost::int64_t,double,EndianessPolicyNoSwap<boost::uint64_t>,SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+						return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+					}
+				}
+			}
+		case (FloatBigEndian):
+			{
+				if (sizeInBits+(startbit%8)<=32)
+				{
+					typedef GenericIntegerHandler<boost::int32_t,float,EndianessPolicySwap<boost::uint32_t>,SignExtensionPolicyExtend<boost::uint32_t>> Handler;
+					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+				else
+				{
+					if (sizeInBits == 32)
+					{
+						typedef GenericIntegerHandler<boost::int64_t,float,EndianessPolicySwap<boost::uint64_t>,SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+						return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+					}
+					else
+					{
+						typedef GenericIntegerHandler<boost::int64_t,double,EndianessPolicySwap<boost::uint64_t>,SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+						return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+					}
 				}
 			}
 		default:

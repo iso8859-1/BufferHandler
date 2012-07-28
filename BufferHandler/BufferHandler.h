@@ -348,7 +348,7 @@ inline T EndianessPolicySwap<T>::Swap(T value)
 /**
 	This is the slowest possible implementation for reading. Reads using memcopy - this should always work. Should be taken as seldom as possible.
 */
-template<typename internalBufferType, typename endianessPolicy, typename signPolicy>
+template<typename internalBufferType, typename reinterpretType, typename endianessPolicy, typename signPolicy>
 class GenericIntegerHandler : public DataHandler, private endianessPolicy, private signPolicy
 {
 private:
@@ -374,37 +374,37 @@ public:
 	virtual unsigned long long ReadULL(unsigned char* buffer, size_t bufferSize) 
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
-		return static_cast<unsigned long long>(result); 
+		return static_cast<unsigned long long>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
 	virtual long long ReadLL(unsigned char* buffer, size_t bufferSize) 
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
-		return static_cast<long long>(result); 
+		return static_cast<long long>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
 	virtual unsigned long ReadUL(unsigned char* buffer, size_t bufferSize) 
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
-		return static_cast<unsigned long>(result); 
+		return static_cast<unsigned long>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
 	virtual long ReadL(unsigned char* buffer, size_t bufferSize)
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
-		return static_cast<long>(result); 
+		return static_cast<long>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
 	virtual float ReadF(unsigned char* buffer, size_t bufferSize)
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
-		return static_cast<float>(result); 
+		return static_cast<float>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
 	virtual double ReadD(unsigned char* buffer, size_t bufferSize)
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
-		return static_cast<double>(result); 
+		return static_cast<double>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
 	virtual bool ReadB(unsigned char* buffer, size_t bufferSize)
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
-		return static_cast<bool>(result); 
+		return static_cast<bool>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
 };
 
@@ -434,8 +434,8 @@ T AlignedDataHandler<T,intermediateType,swapPolicy>::ReadData(unsigned char* buf
 	return *reinterpret_cast<T*>(&result);
 }
 
-template<typename internalBufferType, typename endianessPolicy, typename signPolicy>
-GenericIntegerHandler<internalBufferType,endianessPolicy,signPolicy>::GenericIntegerHandler(unsigned int startBit, unsigned int bitSize)
+template<typename internalBufferType, typename reinterpretType, typename endianessPolicy, typename signPolicy>
+GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,signPolicy>::GenericIntegerHandler(unsigned int startBit, unsigned int bitSize)
 	: signPolicy(bitSize), endianessPolicy(startBit, bitSize)
 	, m_byteOffset(startBit / 8)
 	, m_bitOffset(startBit % 8)
@@ -443,8 +443,8 @@ GenericIntegerHandler<internalBufferType,endianessPolicy,signPolicy>::GenericInt
 {
 	assert(m_bytesToCopy <= sizeof(internalBufferType));
 }
-template<typename internalBufferType, typename endianessPolicy, typename signPolicy>
-internalBufferType GenericIntegerHandler<internalBufferType,endianessPolicy,signPolicy>::Read(unsigned char* buffer, size_t bufferSize)
+template<typename internalBufferType, typename reinterpretType, typename endianessPolicy, typename signPolicy>
+internalBufferType GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,signPolicy>::Read(unsigned char* buffer, size_t bufferSize)
 {
 	//coyp into internal buffer
 	internalBufferType result = 0;
@@ -459,8 +459,8 @@ internalBufferType GenericIntegerHandler<internalBufferType,endianessPolicy,sign
 	return Extend(result);
 }
 
-template<typename internalBufferType, typename endianessPolicy, typename signPolicy>
-void GenericIntegerHandler<internalBufferType,endianessPolicy,signPolicy>::Write(internalBufferType value, unsigned char* buffer, size_t bufferSize)
+template<typename internalBufferType, typename reinterpretType, typename endianessPolicy, typename signPolicy>
+void GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,signPolicy>::Write(internalBufferType value, unsigned char* buffer, size_t bufferSize)
 {
 	//swap if necessary
 	auto tmp = Swap(value);

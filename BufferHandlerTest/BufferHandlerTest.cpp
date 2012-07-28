@@ -645,8 +645,8 @@ BOOST_AUTO_TEST_CASE ( FLoatPatternTest )
 		}
 
 		auto h = CreateBufferHandler(i,32,FloatLittleEndian);
-
-		BOOST_CHECK(h->ReadF(buffer.GetBuffer(),bufferSizeInBytes) == expected);
+		auto result = h->ReadF(buffer.GetBuffer(),bufferSizeInBytes);
+		BOOST_CHECK( result == expected);
 	}
 	
 }
