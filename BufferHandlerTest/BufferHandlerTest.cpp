@@ -54,6 +54,14 @@ public:
 
 	void ClearBuffer() { memset(m_buffer.get(),0,m_size);}
 
+	void SetPattern()
+	{
+		for (unsigned int i = 0; i<m_size*8; i+=2)
+		{
+			SetBit(i);
+		}
+	}
+
 	void SetBit(unsigned int bitNumber)
 	{
 		size_t noByte = bitNumber / 8;
@@ -532,7 +540,7 @@ BOOST_AUTO_TEST_CASE( ZeroBitAccess )
 
 #pragma endregion
 #pragma region Generic Bit Pattern Test
-BOOST_AUTO_TEST_CASE ( GenericBitPatternTest )
+BOOST_AUTO_TEST_CASE ( GenericBitPatternTestUnsignedInt )
 {
 	const int bufferSizeInBytes = 9;
 	for (int i=1; i<=64; ++i) //loop through all numbers of bits
@@ -545,24 +553,102 @@ BOOST_AUTO_TEST_CASE ( GenericBitPatternTest )
 			}
 			TestBuffer buffer(bufferSizeInBytes);
 			buffer.ClearBuffer();
+			buffer.SetPattern();
 			buffer.SetBits(k,k+i-1);
 
 			auto h = CreateBufferHandler(k,i,UnsignedIntegerLittleEndian);
 
-			unsigned long long expected = 0;
-			for (int l = 0; l<i; ++l)
 			{
-				expected <<= 1;
-				expected |= 1;
-			}
-
-			{
+				unsigned long long expected = 0;
+				for (int l = 0; l<i; ++l)
+				{
+					expected <<= 1;
+					expected |= 1;
+				}
 				auto result = h->ReadULL(buffer.GetBuffer(),bufferSizeInBytes);
+				BOOST_CHECK(result == expected);
+			}
+			{
+				unsigned long expected = 0;
+				for (int l = 0; l<i; ++l)
+				{
+					expected <<= 1;
+					expected |= 1;
+				}
+				auto result = h->ReadUL(buffer.GetBuffer(),bufferSizeInBytes);
 				BOOST_CHECK(result == expected);
 			}
 
 		}
 	}
+}
+
+BOOST_AUTO_TEST_CASE ( GenericBitPatternTestSignedInt )
+{
+	const int bufferSizeInBytes = 9;
+	for (int i=2; i<=64; ++i) //loop through all numbers of bits, start with 2 bits
+	{
+		for (int k=0; k<bufferSizeInBytes*8-i; ++k)
+		{
+			if (i+k>64)
+			{
+				continue;
+			}
+			TestBuffer buffer(bufferSizeInBytes);
+			buffer.ClearBuffer();
+			buffer.SetPattern();
+			buffer.SetBits(k,k+i-1);
+
+			auto h = CreateBufferHandler(k,i,SignedIntegerLittleEndian);
+
+			{
+				long long expected = -1;
+				auto result = h->ReadLL(buffer.GetBuffer(),bufferSizeInBytes);
+				BOOST_CHECK(result == expected);
+			}
+			{
+				long expected = -1;
+				auto result = h->ReadLL(buffer.GetBuffer(),bufferSizeInBytes);
+				BOOST_CHECK(result == expected);
+			}
+
+		}
+	}
+}
+
+BOOST_AUTO_TEST_CASE ( FLoatPatternTest )
+{
+	const int bufferSizeInBytes = 9;
+
+	float expected = 3.0e5f;
+
+	for (int i=0; i<=9*8-32; ++i) //bit offset loop
+	{
+		TestBuffer buffer(bufferSizeInBytes);
+		buffer.ClearBuffer();
+		buffer.SetPattern();
+
+		//transfer expected float into buffer
+		boost::uint32_t transferbuffer = *reinterpret_cast<boost::uint32_t*>(&expected);
+		for (int k=0; k<32; ++k)
+		{
+			auto tmp = transferbuffer & 1;
+			if ((tmp) != 0)
+			{
+				buffer.SetBit(i+k);
+			}
+			else
+			{
+				buffer.ClearBit(i+k);
+			}
+			transferbuffer>>=1;
+		}
+
+		auto h = CreateBufferHandler(i,32,FloatLittleEndian);
+
+		BOOST_CHECK(h->ReadF(buffer.GetBuffer(),bufferSizeInBytes) == expected);
+	}
+	
 }
 #pragma endregion
 
