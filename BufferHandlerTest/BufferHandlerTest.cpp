@@ -146,9 +146,8 @@ BOOST_AUTO_TEST_CASE(EndianessPolicyNoSwapTest)
 		EndianessPolicyNoSwap<boost::uint32_t> policy(7,8);
 		boost::uint32_t value = 0xFFFFFFFF; // 8 1s hidden inside 4 bytes of 1s
 		auto result = policy.Align(value);
-		result = policy.ApplyMask(value);
-		BOOST_CHECK(result == 0xFF);
 		result = policy.Swap(result);
+		result = policy.ApplyMask(value);
 		BOOST_CHECK(result == 0xFF);
 	}
 }
@@ -165,9 +164,9 @@ BOOST_AUTO_TEST_CASE(EndianessPolicySwapTest)
 		EndianessPolicySwap<boost::uint32_t> policy(7,16);
 		boost::uint32_t value = 0xFFFFFFFF; // 16 1s hidden inside 4 bytes of 1s
 		auto result = policy.Align(value);
-		result = policy.ApplyMask(value);
 		BOOST_CHECK(result == 0xFFFF0000);
 		result = policy.Swap(result);
+		result = policy.ApplyMask(result);
 		BOOST_CHECK(result == 0xFFFF);
 	}
 }
@@ -650,6 +649,43 @@ BOOST_AUTO_TEST_CASE ( FLoatPatternTest )
 	}
 	
 }
+
+BOOST_AUTO_TEST_CASE ( FLoatPatternTestBE )
+{
+	const int bufferSizeInBytes = 9;
+
+	float expected = 3.0e5f;
+
+	for (int i=0; i<=9*8-32; ++i) //bit offset loop
+	{
+		TestBuffer buffer(bufferSizeInBytes);
+		buffer.ClearBuffer();
+		buffer.SetPattern();
+
+		//transfer expected float into buffer
+		boost::uint32_t transferbuffer = *reinterpret_cast<boost::uint32_t*>(&expected);
+		transferbuffer = Swap32(transferbuffer);
+		for (int k=0; k<32; ++k)
+		{
+			auto tmp = transferbuffer & 1;
+			if ((tmp) != 0)
+			{
+				buffer.SetBit(i+k);
+			}
+			else
+			{
+				buffer.ClearBit(i+k);
+			}
+			transferbuffer>>=1;
+		}
+
+		auto h = CreateBufferHandler(i,32,FloatBigEndian);
+		auto result = h->ReadF(buffer.GetBuffer(),bufferSizeInBytes);
+		BOOST_CHECK( result == expected);
+	}
+	
+}
+
 #pragma endregion
 
 #pragma region Writing Tests

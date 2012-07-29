@@ -298,18 +298,24 @@ struct EndianessPolicyNoSwap
 template<typename T>
 struct EndianessPolicySwap
 {
-	unsigned int shift;
+	unsigned int shiftL;
+	unsigned int shiftR;
 	T mask;
 
 	EndianessPolicySwap(unsigned int startBit, unsigned int bitSize) 
-		: shift( sizeof(T)*8 - ((startBit%8)+bitSize)  )
+		: shiftR( startBit % 8 )
+		, shiftL( (sizeof(T) - (bitSize + 7)/8)*8)
 		, mask( 0 )
 	{
 		mask = ~static_cast<T>(0);
-		mask >>= bitSize;
-		mask = ~ mask;
+		mask <<= bitSize;
+		mask = ~mask;
 	}
-	T Align(T value){ return value << shift; }
+	T Align(T value)
+	{ 
+		T result = value >> shiftR;
+		return result << shiftL; 
+	} //the lowest value bit of the BE value must be a bit 0 of a byte
 	T InverseAlign(T value) { return value << shift; }
 	T ApplyMask(T value) { return value & mask; }
 	T Swap(T value);
@@ -451,10 +457,10 @@ internalBufferType GenericIntegerHandler<internalBufferType,reinterpretType,endi
 	memcpy(&result,buffer+m_byteOffset,m_bytesToCopy);
 	//align (right if LE, left if BE)
 	result = Align(result);
-	//apply mask (depending on alignment)
-	result = ApplyMask(result);
 	//swap if necessary
 	result = Swap(result);
+	//apply mask (depending on alignment)
+	result = ApplyMask(result);
 	//sign extension if necessary
 	return Extend(result);
 }
