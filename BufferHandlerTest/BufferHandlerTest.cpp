@@ -686,6 +686,40 @@ BOOST_AUTO_TEST_CASE ( FLoatPatternTestBE )
 	
 }
 
+BOOST_AUTO_TEST_CASE ( UIntBEPatternTest )
+{
+	const int bufferSizeInBytes = 9;
+
+	boost::uint16_t expected = 0x0102;
+
+	for (int i=0; i<=9*8-32; ++i) //bit offset loop
+	{
+		TestBuffer buffer(bufferSizeInBytes);
+		buffer.ClearBuffer();
+		buffer.SetPattern();
+
+		//transfer expected float into buffer
+		boost::uint16_t transferbuffer = Swap16(expected);
+		for (int k=0; k<sizeof(transferbuffer)*8; ++k)
+		{
+			auto tmp = transferbuffer & 1;
+			if ((tmp) != 0)
+			{
+				buffer.SetBit(i+k);
+			}
+			else
+			{
+				buffer.ClearBit(i+k);
+			}
+			transferbuffer>>=1;
+		}
+
+		auto h = CreateBufferHandler(i,sizeof(expected)*8,UnsignedIntegerBigEndian);
+		auto result = h->ReadUL(buffer.GetBuffer(),bufferSizeInBytes);
+		BOOST_CHECK( result == expected);
+	}
+	
+}
 #pragma endregion
 
 #pragma region Writing Tests
