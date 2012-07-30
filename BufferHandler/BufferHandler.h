@@ -52,7 +52,12 @@ enum DataType
 	FloatBigEndian
 };
 
-//Endian swap functions
+/**
+Swaps the 2 bytes of a 16bit value. Uses the built-in intrinsic of Visual Studio if available.
+Example: 0x0102 --> 0x0201
+@param src value to be swapped
+@return swapped value
+*/
 inline boost::uint16_t Swap16(boost::uint16_t src)
 {
 #if (_MSC_VER >= 1400)
@@ -61,6 +66,13 @@ inline boost::uint16_t Swap16(boost::uint16_t src)
 	return src << 8 | src >> 8;
 #endif
 }
+
+/**
+Swaps the 4 bytes of a 32bit value. Uses the built-in intrinsic of Visual Studio if available.
+Example: 0x01020304 --> 0x04030201
+@param src value to be swapped
+@return swapped value
+*/
 inline boost::uint32_t Swap32(boost::uint32_t src)
 {
 #if (_MSC_VER >= 1400)
@@ -72,6 +84,13 @@ inline boost::uint32_t Swap32(boost::uint32_t src)
 	return result;
 #endif
 }
+
+/**
+Swaps the 8 bytes of a 64bit value. Uses the built-in intrinsic of Visual Studio if available.
+Example: 0x01020304050607 --> 0x00706054030201
+@param src value to be swapped
+@return swapped value
+*/
 inline boost::uint64_t Swap64(boost::uint64_t src)
 {
 #if (_MSC_VER >= 1400)
