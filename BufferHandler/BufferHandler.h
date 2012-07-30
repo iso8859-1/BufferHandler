@@ -107,28 +107,117 @@ inline boost::uint64_t Swap64(boost::uint64_t src)
 
 /**
 Interface class to read & write from a buffer at a specific location. The specific location is defined at creation
-time, the buffer can be changed for each read/write.
+time, the buffer can be changed for each read/write. The specification consists of data type, position and size of
+the data.
 
 The default implementation throws std::logic_error on all methods to detect errors in the implementation.
 */
 class DataHandler
 {
 public:
-
+	/**
+	Writes a 64bit unsigned integer to the slot specified at creation using \ref CreateBufferHandler.
+	@param value value to be written.
+	@param buffer buffer to be written to.
+	@param bufferSize size of the buffer to be written to.
+	*/
 	virtual void WriteUI64(boost::uint64_t value, unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	/**
+	Writes a 64bit integer to the slot specified at creation using \ref CreateBufferHandler.
+	@param value value to be written.
+	@param buffer buffer to be written to.
+	@param bufferSize size of the buffer to be written to.
+	*/
 	virtual void WriteI64(boost::int64_t value, unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	/**
+	Writes a 32bit unsigned integer to the slot specified at creation using \ref CreateBufferHandler.
+	@param value value to be written.
+	@param buffer buffer to be written to.
+	@param bufferSize size of the buffer to be written to.
+	*/
 	virtual void WriteUI32(boost::uint32_t , unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	/**
+	Writes a 32bit integer to the slot specified at creation using \ref CreateBufferHandler.
+	@param value value to be written.
+	@param buffer buffer to be written to.
+	@param bufferSize size of the buffer to be written to.
+	*/
 	virtual void WriteI32(boost::int32_t , unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	/**
+	Writes a 32bit float to the slot specified at creation using \ref CreateBufferHandler.
+	@param value value to be written.
+	@param buffer buffer to be written to.
+	@param bufferSize size of the buffer to be written to.
+	*/
 	virtual void WriteF(float , unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	/**
+	Writes a 64bit double to the slot specified at creation using \ref CreateBufferHandler.
+	@param value value to be written.
+	@param buffer buffer to be written to.
+	@param bufferSize size of the buffer to be written to.
+	*/
 	virtual void WriteD(double , unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	/**
+	Writes a 1bit boolean to the slot specified at creation using \ref CreateBufferHandler.
+	@param value value to be written.
+	@param buffer buffer to be written to.
+	@param bufferSize size of the buffer to be written to.
+	*/
 	virtual void WriteB(bool , unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
 	
+
+	/**
+	Reads the value at the slot specified during creation using \ref CreateBufferHandler and converts it to a 64bit unsigned
+	integer.
+	@param buffer buffer to be read from
+	@param bufferSize size of the buffer
+	@return converted value from the buffer
+	*/
 	virtual boost::uint64_t ReadUI64(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	/**
+	Reads the value at the slot specified during creation using \ref CreateBufferHandler and converts it to a 64bit 
+	integer.
+	@param buffer buffer to be read from
+	@param bufferSize size of the buffer
+	@return converted value from the buffer
+	*/
 	virtual boost::int64_t ReadI64(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	/**
+	Reads the value at the slot specified during creation using \ref CreateBufferHandler and converts it to a 32bit unsigned
+	integer.
+	@param buffer buffer to be read from
+	@param bufferSize size of the buffer
+	@return converted value from the buffer
+	*/
 	virtual boost::uint32_t ReadUI32(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	/**
+	Reads the value at the slot specified during creation using \ref CreateBufferHandler and converts it to a 32bit 
+	integer.
+	@param buffer buffer to be read from
+	@param bufferSize size of the buffer
+	@return converted value from the buffer
+	*/
 	virtual boost::int32_t ReadI32(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	/**
+	Reads the value at the slot specified during creation using \ref CreateBufferHandler and converts it to a 32bit float
+	@param buffer buffer to be read from
+	@param bufferSize size of the buffer
+	@return converted value from the buffer
+	*/
 	virtual float ReadF(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	/**
+	Reads the value at the slot specified during creation using \ref CreateBufferHandler and converts it to a 64bit double
+	@param buffer buffer to be read from
+	@param bufferSize size of the buffer
+	@return converted value from the buffer
+	*/
 	virtual double ReadD(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	/**
+	Reads the value at the slot specified during creation using \ref CreateBufferHandler and converts it to a 1bit bool
+	@param buffer buffer to be read from
+	@param bufferSize size of the buffer
+	@return converted value from the buffer
+	*/
 	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }	
 };
 
