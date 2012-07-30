@@ -217,7 +217,7 @@ BOOST_AUTO_TEST_CASE(accessLowerBoundaryTest8UILE)
 	unsigned char buffer[10] = {0,1,2,3,4,5,6,7,8,9};
 	{
 		auto h = CreateBufferHandler(0,8,UnsignedIntegerLittleEndian);
-		auto value = h->ReadL(&buffer[0],sizeof(buffer));
+		auto value = h->ReadI32(&buffer[0],sizeof(buffer));
 		BOOST_CHECK(value == 0);
 	}
 }
@@ -227,7 +227,7 @@ BOOST_AUTO_TEST_CASE(accessLowerBoundaryTest8SILE)
 	unsigned char buffer[10] = {0,1,2,3,4,5,6,7,8,9};
 	{
 		auto h = CreateBufferHandler(0,8,SignedIntegerLittleEndian);
-		auto value = h->ReadL(&buffer[0],sizeof(buffer));
+		auto value = h->ReadI32(&buffer[0],sizeof(buffer));
 		BOOST_CHECK(value == 0);
 	}
 }
@@ -237,7 +237,7 @@ BOOST_AUTO_TEST_CASE(accessLowerBoundaryTest16UILE)
 	unsigned char buffer[10] = {0,1,2,3,4,5,6,7,8,9};
 	{
 		auto h = CreateBufferHandler(0,16,UnsignedIntegerLittleEndian);
-		auto value = h->ReadL(&buffer[0],sizeof(buffer));
+		auto value = h->ReadI32(&buffer[0],sizeof(buffer));
 		BOOST_CHECK(value == 0x0100);
 	}
 }
@@ -247,7 +247,7 @@ BOOST_AUTO_TEST_CASE(accessLowerBoundaryTest16SILE)
 	unsigned char buffer[10] = {0,1,2,3,4,5,6,7,8,9};
 	{
 		auto h = CreateBufferHandler(0,16,SignedIntegerLittleEndian);
-		auto value = h->ReadL(&buffer[0],sizeof(buffer));
+		auto value = h->ReadI32(&buffer[0],sizeof(buffer));
 		BOOST_CHECK(value == 0x0100);
 	}
 }
@@ -257,7 +257,7 @@ BOOST_AUTO_TEST_CASE(accessLowerBoundaryTest32UILE)
 	unsigned char buffer[10] = {0,1,2,3,4,5,6,7,8,9};
 	{
 		auto h = CreateBufferHandler(0,32,UnsignedIntegerLittleEndian);
-		auto value = h->ReadL(&buffer[0],sizeof(buffer));
+		auto value = h->ReadI32(&buffer[0],sizeof(buffer));
 		BOOST_CHECK(value == 0x03020100);
 	}
 }
@@ -267,7 +267,7 @@ BOOST_AUTO_TEST_CASE(accessLowerBoundaryTest32SILE)
 	unsigned char buffer[10] = {0,1,2,3,4,5,6,7,8,9};
 	{
 		auto h = CreateBufferHandler(0,32,SignedIntegerLittleEndian);
-		auto value = h->ReadL(&buffer[0],sizeof(buffer));
+		auto value = h->ReadI32(&buffer[0],sizeof(buffer));
 		BOOST_CHECK(value == 0x03020100);
 	}
 }
@@ -277,7 +277,7 @@ BOOST_AUTO_TEST_CASE(accessLowerBoundaryTest64UILE)
 	unsigned char buffer[10] = {0,1,2,3,4,5,6,7,8,9};
 	{
 		auto h = CreateBufferHandler(0,64,UnsignedIntegerLittleEndian);
-		auto value = h->ReadLL(&buffer[0],sizeof(buffer));
+		auto value = h->ReadI64(&buffer[0],sizeof(buffer));
 		BOOST_CHECK(value == 0x0706050403020100);
 	}
 }
@@ -287,7 +287,7 @@ BOOST_AUTO_TEST_CASE(accessLowerBoundaryTest64SILE)
 	unsigned char buffer[10] = {0,1,2,3,4,5,6,7,8,9};
 	{
 		auto h = CreateBufferHandler(0,64,SignedIntegerLittleEndian);
-		auto value = h->ReadLL(&buffer[0],sizeof(buffer));
+		auto value = h->ReadI64(&buffer[0],sizeof(buffer));
 		BOOST_CHECK(value == 0x0706050403020100);
 	}
 }
@@ -303,7 +303,7 @@ BOOST_AUTO_TEST_CASE(genericAlignedAccessTest)
 		{
 			auto h = CreateBufferHandler(offset, i, UnsignedIntegerLittleEndian);
 			{
-				auto value = h->ReadULL(&buffer[0],sizeof(buffer));
+				auto value = h->ReadUI64(&buffer[0],sizeof(buffer));
 				unsigned long long expected = 0;
 				for (int counter = i; counter > 0; counter -=8)
 				{
@@ -312,7 +312,7 @@ BOOST_AUTO_TEST_CASE(genericAlignedAccessTest)
 				BOOST_CHECK(value == expected);
 			}
 			{
-				auto value = h->ReadLL(&buffer[0],sizeof(buffer));
+				auto value = h->ReadI64(&buffer[0],sizeof(buffer));
 				long long expected = 0;
 				for (int counter = i; counter > 0; counter -=8)
 				{
@@ -332,7 +332,7 @@ BOOST_AUTO_TEST_CASE(genericAlignedAccessTest)
 			if (i<=32)
 			{
 				{
-				auto value = h->ReadUL(&buffer[0],sizeof(buffer));
+				auto value = h->ReadUI32(&buffer[0],sizeof(buffer));
 				unsigned long long expected = 0;
 				for (int counter = i; counter > 0; counter -=8)
 				{
@@ -341,7 +341,7 @@ BOOST_AUTO_TEST_CASE(genericAlignedAccessTest)
 				BOOST_CHECK(value == expected);
 				}
 				{
-					auto value = h->ReadL(&buffer[0],sizeof(buffer));
+					auto value = h->ReadI32(&buffer[0],sizeof(buffer));
 					long long expected = 0;
 					for (int counter = i; counter > 0; counter -=8)
 					{
@@ -376,7 +376,7 @@ BOOST_AUTO_TEST_CASE(genericAlignedAccessTestBigEndian)
 		{
 			auto h = CreateBufferHandler(offset, i, UnsignedIntegerBigEndian);
 			{
-				auto value = h->ReadULL(&buffer[0],sizeof(buffer));
+				auto value = h->ReadUI64(&buffer[0],sizeof(buffer));
 				unsigned long long expected = 0;
 				for (int counter = 8; counter <= i; counter +=8)
 				{
@@ -385,7 +385,7 @@ BOOST_AUTO_TEST_CASE(genericAlignedAccessTestBigEndian)
 				BOOST_CHECK(value == expected);
 			}
 			{
-				auto value = h->ReadLL(&buffer[0],sizeof(buffer));
+				auto value = h->ReadI64(&buffer[0],sizeof(buffer));
 				long long expected = 0;
 				for (int counter = 8; counter <= i; counter +=8)
 				{
@@ -405,7 +405,7 @@ BOOST_AUTO_TEST_CASE(genericAlignedAccessTestBigEndian)
 			if (i<=32)
 			{
 				{
-				auto value = h->ReadUL(&buffer[0],sizeof(buffer));
+				auto value = h->ReadUI32(&buffer[0],sizeof(buffer));
 				unsigned long long expected = 0;
 				for (int counter = 8; counter <= i; counter +=8)
 				{
@@ -414,7 +414,7 @@ BOOST_AUTO_TEST_CASE(genericAlignedAccessTestBigEndian)
 				BOOST_CHECK(value == expected);
 				}
 				{
-					auto value = h->ReadL(&buffer[0],sizeof(buffer));
+					auto value = h->ReadI32(&buffer[0],sizeof(buffer));
 					long long expected = 0;
 					for (int counter = 8; counter <= i; counter +=8)
 					{
@@ -445,19 +445,19 @@ BOOST_AUTO_TEST_CASE(alignedAccessTestUILE8Bit)
 	auto h = CreateBufferHandler(8,8,UnsignedIntegerLittleEndian);
 
 	{
-		auto value = h->ReadLL(&buffer[0],sizeof(buffer));
+		auto value = h->ReadI64(&buffer[0],sizeof(buffer));
 		BOOST_CHECK(value == 1);
 	}
 	{
-		auto value = h->ReadL(&buffer[0],sizeof(buffer));
+		auto value = h->ReadI32(&buffer[0],sizeof(buffer));
 		BOOST_CHECK(value == 1);
 	}
 	{
-		auto value = h->ReadULL(&buffer[0],sizeof(buffer));
+		auto value = h->ReadUI64(&buffer[0],sizeof(buffer));
 		BOOST_CHECK(value == 1);
 	}
 	{
-		auto value = h->ReadUL(&buffer[0],sizeof(buffer));
+		auto value = h->ReadUI32(&buffer[0],sizeof(buffer));
 		BOOST_CHECK(value == 1);
 	}
 	{
@@ -477,19 +477,19 @@ BOOST_AUTO_TEST_CASE(alignedAccessTestSILE8Bit)
 	auto h2 = CreateBufferHandler(16,8,SignedIntegerLittleEndian);
 
 	{
-		auto value = h->ReadLL(&buffer[0],sizeof(buffer));
+		auto value = h->ReadI64(&buffer[0],sizeof(buffer));
 		BOOST_CHECK(value == -1);
 	}
 	{
-		auto value = h->ReadL(&buffer[0],sizeof(buffer));
+		auto value = h->ReadI32(&buffer[0],sizeof(buffer));
 		BOOST_CHECK(value == -1);
 	}
 	{
-		auto value = h2->ReadULL(&buffer[0],sizeof(buffer)); //use h2 since behavior at h1 is undefined.
+		auto value = h2->ReadUI64(&buffer[0],sizeof(buffer)); //use h2 since behavior at h1 is undefined.
 		BOOST_CHECK(value == 2);
 	}
 	{
-		auto value = h2->ReadUL(&buffer[0],sizeof(buffer)); //use h2 since behavior at h1 is undefined.
+		auto value = h2->ReadUI32(&buffer[0],sizeof(buffer)); //use h2 since behavior at h1 is undefined.
 		BOOST_CHECK(value == 2);
 	}
 	{
@@ -530,10 +530,10 @@ BOOST_AUTO_TEST_CASE( ZeroBitAccess )
 	BOOST_CHECK(false == h->ReadB(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
 	BOOST_CHECK(0 == h->ReadD(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
 	BOOST_CHECK(0 == h->ReadF(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
-	BOOST_CHECK(0 == h->ReadL(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
-	BOOST_CHECK(0 == h->ReadUL(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
-	BOOST_CHECK(0 == h->ReadLL(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
-	BOOST_CHECK(0 == h->ReadULL(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
+	BOOST_CHECK(0 == h->ReadI32(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
+	BOOST_CHECK(0 == h->ReadUI32(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
+	BOOST_CHECK(0 == h->ReadI64(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
+	BOOST_CHECK(0 == h->ReadUI64(reinterpret_cast<unsigned char*>(&buffer),sizeof(buffer)));
 }
 
 
@@ -564,7 +564,7 @@ BOOST_AUTO_TEST_CASE ( GenericBitPatternTestUnsignedInt )
 					expected <<= 1;
 					expected |= 1;
 				}
-				auto result = h->ReadULL(buffer.GetBuffer(),bufferSizeInBytes);
+				auto result = h->ReadUI64(buffer.GetBuffer(),bufferSizeInBytes);
 				BOOST_CHECK(result == expected);
 			}
 			{
@@ -574,7 +574,7 @@ BOOST_AUTO_TEST_CASE ( GenericBitPatternTestUnsignedInt )
 					expected <<= 1;
 					expected |= 1;
 				}
-				auto result = h->ReadUL(buffer.GetBuffer(),bufferSizeInBytes);
+				auto result = h->ReadUI32(buffer.GetBuffer(),bufferSizeInBytes);
 				BOOST_CHECK(result == expected);
 			}
 
@@ -602,12 +602,12 @@ BOOST_AUTO_TEST_CASE ( GenericBitPatternTestSignedInt )
 
 			{
 				long long expected = -1;
-				auto result = h->ReadLL(buffer.GetBuffer(),bufferSizeInBytes);
+				auto result = h->ReadI64(buffer.GetBuffer(),bufferSizeInBytes);
 				BOOST_CHECK(result == expected);
 			}
 			{
 				long expected = -1;
-				auto result = h->ReadLL(buffer.GetBuffer(),bufferSizeInBytes);
+				auto result = h->ReadI64(buffer.GetBuffer(),bufferSizeInBytes);
 				BOOST_CHECK(result == expected);
 			}
 
@@ -715,7 +715,7 @@ BOOST_AUTO_TEST_CASE ( UIntBEPatternTest )
 		}
 
 		auto h = CreateBufferHandler(i,sizeof(expected)*8,UnsignedIntegerBigEndian);
-		auto result = h->ReadUL(buffer.GetBuffer(),bufferSizeInBytes);
+		auto result = h->ReadUI32(buffer.GetBuffer(),bufferSizeInBytes);
 		BOOST_CHECK( result == expected);
 	}
 	
@@ -730,19 +730,19 @@ BOOST_AUTO_TEST_CASE(alignedWritingTestUILE8Bit)
 	auto h = CreateBufferHandler(8,8,UnsignedIntegerLittleEndian);
 
 	{
-		h->WriteLL(2,&buffer[0],sizeof(buffer));
+		h->WriteI64(2,&buffer[0],sizeof(buffer));
 		BOOST_CHECK(buffer[1] == 2);
 	}
 	{
-		h->WriteL(3,&buffer[0],sizeof(buffer));
+		h->WriteI32(3,&buffer[0],sizeof(buffer));
 		BOOST_CHECK(buffer[1] == 3);
 	}
 	{
-		h->WriteULL(4,&buffer[0],sizeof(buffer));
+		h->WriteUI64(4,&buffer[0],sizeof(buffer));
 		BOOST_CHECK(buffer[1] == 4);
 	}
 	{
-		h->WriteUL(5,&buffer[0],sizeof(buffer));
+		h->WriteUI32(5,&buffer[0],sizeof(buffer));
 		BOOST_CHECK(buffer[1] == 5);
 	}
 	{
@@ -763,11 +763,11 @@ BOOST_AUTO_TEST_CASE(alignedWritingTestSILE8Bit)
 	auto h = CreateBufferHandler(8,8,SignedIntegerLittleEndian);
 
 	{
-		h->WriteLL(-2,&buffer[0],sizeof(buffer));
+		h->WriteI64(-2,&buffer[0],sizeof(buffer));
 		BOOST_CHECK(reinterpret_cast<char&>(buffer[1]) == -2);
 	}
 	{
-		h->WriteL(-3,&buffer[0],sizeof(buffer));
+		h->WriteI32(-3,&buffer[0],sizeof(buffer));
 		BOOST_CHECK(reinterpret_cast<char&>(buffer[1]) == -3);
 	}
 	{
