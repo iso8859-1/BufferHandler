@@ -115,21 +115,21 @@ class DataHandler
 {
 public:
 
-	virtual void WriteUI64(boost::uint64_t value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteI64(boost::int64_t value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteUI32(boost::uint32_t , unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteI32(boost::int32_t , unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteF(float , unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteD(double , unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteB(bool , unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual void WriteUI64(boost::uint64_t value, unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual void WriteI64(boost::int64_t value, unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual void WriteUI32(boost::uint32_t , unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual void WriteI32(boost::int32_t , unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual void WriteF(float , unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual void WriteD(double , unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual void WriteB(bool , unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
 	
-	virtual boost::uint64_t ReadUI64(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual boost::int64_t ReadI64(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual boost::uint32_t ReadUI32(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual boost::int32_t ReadI32(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }	
+	virtual boost::uint64_t ReadUI64(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual boost::int64_t ReadI64(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual boost::uint32_t ReadUI32(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual boost::int32_t ReadI32(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual float ReadF(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual double ReadD(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }	
 };
 
 template<typename SwapSize>
@@ -178,8 +178,8 @@ class AlignedDataHandler : public DataHandler
 
 	unsigned int m_startByteOffset;
 
-	T ReadData(unsigned char* buffer, size_t bufferSize);
-	void WriteData(T value, unsigned char* buffer, size_t bufferSize);
+	T ReadData(unsigned char* buffer, size_t bufferSize) const;
+	void WriteData(T value, unsigned char* buffer, size_t bufferSize) const;
 public:
 	AlignedDataHandler(unsigned int startBit) : m_startByteOffset(startBit / 8) 
 	{
@@ -187,21 +187,21 @@ public:
 	}
 	virtual ~AlignedDataHandler(){}
 
-	virtual void WriteUI64(boost::uint64_t value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize); }
-	virtual void WriteI64(boost::int64_t value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize); }
-	virtual void WriteUI32(boost::uint32_t value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize); }
-	virtual void WriteI32(boost::int32_t value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize); }
-	virtual void WriteF(float value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize); }
-	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize); }
-	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize) { WriteData(static_cast<T>(value), buffer, bufferSize); }
+	virtual void WriteUI64(boost::uint64_t value, unsigned char* buffer, size_t bufferSize) const { WriteData(static_cast<T>(value), buffer, bufferSize); }
+	virtual void WriteI64(boost::int64_t value, unsigned char* buffer, size_t bufferSize) const { WriteData(static_cast<T>(value), buffer, bufferSize); }
+	virtual void WriteUI32(boost::uint32_t value, unsigned char* buffer, size_t bufferSize) const { WriteData(static_cast<T>(value), buffer, bufferSize); }
+	virtual void WriteI32(boost::int32_t value, unsigned char* buffer, size_t bufferSize) const { WriteData(static_cast<T>(value), buffer, bufferSize); }
+	virtual void WriteF(float value, unsigned char* buffer, size_t bufferSize) const { WriteData(static_cast<T>(value), buffer, bufferSize); }
+	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) const { WriteData(static_cast<T>(value), buffer, bufferSize); }
+	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize) const { WriteData(static_cast<T>(value), buffer, bufferSize); }
 	
-	virtual boost::uint64_t ReadUI64(unsigned char* buffer, size_t bufferSize) { return static_cast<unsigned long long>(ReadData(buffer, bufferSize)); }
-	virtual boost::int64_t ReadI64(unsigned char* buffer, size_t bufferSize) { return static_cast<long long>(ReadData(buffer, bufferSize)); }
-	virtual boost::uint32_t ReadUI32(unsigned char* buffer, size_t bufferSize){ return static_cast<unsigned long>(ReadData(buffer, bufferSize)); }
-	virtual boost::int32_t ReadI32(unsigned char* buffer, size_t bufferSize) { return static_cast<long>(ReadData(buffer, bufferSize)); }
-	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { return static_cast<float>(ReadData(buffer, bufferSize)); }
-	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { return static_cast<double>(ReadData(buffer, bufferSize)); }
-	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { return static_cast<bool>(ReadData(buffer, bufferSize)); }
+	virtual boost::uint64_t ReadUI64(unsigned char* buffer, size_t bufferSize) const { return static_cast<unsigned long long>(ReadData(buffer, bufferSize)); }
+	virtual boost::int64_t ReadI64(unsigned char* buffer, size_t bufferSize) const { return static_cast<long long>(ReadData(buffer, bufferSize)); }
+	virtual boost::uint32_t ReadUI32(unsigned char* buffer, size_t bufferSize) const { return static_cast<unsigned long>(ReadData(buffer, bufferSize)); }
+	virtual boost::int32_t ReadI32(unsigned char* buffer, size_t bufferSize) const { return static_cast<long>(ReadData(buffer, bufferSize)); }
+	virtual float ReadF(unsigned char* buffer, size_t bufferSize) const { return static_cast<float>(ReadData(buffer, bufferSize)); }
+	virtual double ReadD(unsigned char* buffer, size_t bufferSize) const { return static_cast<double>(ReadData(buffer, bufferSize)); }
+	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) const { return static_cast<bool>(ReadData(buffer, bufferSize)); }
 };
 
 class ZeroDataHandler : public DataHandler
@@ -210,21 +210,21 @@ public:
 	ZeroDataHandler() {}
 	~ZeroDataHandler() {}
 
-	virtual void WriteUI64(boost::uint64_t , unsigned char* , size_t ) { }
-	virtual void WriteI64(boost::int64_t , unsigned char* , size_t )  { }
-	virtual void WriteUI32(boost::uint32_t , unsigned char* , size_t )  { }
-	virtual void WriteI32(boost::int32_t , unsigned char* , size_t )  { }
-	virtual void WriteF(float , unsigned char* , size_t )  { }
-	virtual void WriteD(double , unsigned char* , size_t )  { }
-	virtual void WriteB(bool , unsigned char* , size_t )  { }
+	virtual void WriteUI64(boost::uint64_t , unsigned char* , size_t ) const { }
+	virtual void WriteI64(boost::int64_t , unsigned char* , size_t ) const  { }
+	virtual void WriteUI32(boost::uint32_t , unsigned char* , size_t ) const  { }
+	virtual void WriteI32(boost::int32_t , unsigned char* , size_t ) const  { }
+	virtual void WriteF(float , unsigned char* , size_t ) const  { }
+	virtual void WriteD(double , unsigned char* , size_t ) const  { }
+	virtual void WriteB(bool , unsigned char* , size_t ) const  { }
 	
-	virtual boost::uint64_t ReadUI64(unsigned char* , size_t ) { return static_cast<unsigned long long>(0); }
-	virtual boost::int64_t ReadI64(unsigned char* , size_t ) { return static_cast<long long>(0); }
-	virtual boost::uint32_t ReadUI32(unsigned char* , size_t ){ return static_cast<unsigned long>(0); }
-	virtual boost::int32_t ReadI32(unsigned char* , size_t ) { return static_cast<long>(0); }
-	virtual float ReadF(unsigned char* , size_t ) { return static_cast<float>(0); }
-	virtual double ReadD(unsigned char* , size_t ) { return static_cast<double>(0); }
-	virtual bool ReadB(unsigned char* , size_t ) { return static_cast<bool>(0); }
+	virtual boost::uint64_t ReadUI64(unsigned char* , size_t ) const { return static_cast<unsigned long long>(0); }
+	virtual boost::int64_t ReadI64(unsigned char* , size_t ) const { return static_cast<long long>(0); }
+	virtual boost::uint32_t ReadUI32(unsigned char* , size_t ) const { return static_cast<unsigned long>(0); }
+	virtual boost::int32_t ReadI32(unsigned char* , size_t ) const { return static_cast<long>(0); }
+	virtual float ReadF(unsigned char* , size_t ) const { return static_cast<float>(0); }
+	virtual double ReadD(unsigned char* , size_t ) const { return static_cast<double>(0); }
+	virtual bool ReadB(unsigned char* , size_t ) const { return static_cast<bool>(0); }
 };
 
 class BitDataHandler : public DataHandler
@@ -234,11 +234,11 @@ class BitDataHandler : public DataHandler
 	unsigned char m_readMask;
 	unsigned char m_writeMask;
 
-	bool ReadBit(unsigned char* buffer, size_t )
+	bool ReadBit(unsigned char* buffer, size_t ) const
 	{
 		return ((*reinterpret_cast<unsigned char*>(buffer+m_startByteOffset)) & m_readMask) != 0;
 	}
-	void WriteBit(bool value, unsigned char* buffer, size_t )
+	void WriteBit(bool value, unsigned char* buffer, size_t ) const
 	{
 		if (value)
 		{
@@ -260,28 +260,28 @@ public:
 
 	virtual ~BitDataHandler(){}
 
-	virtual void WriteUI64(boost::uint64_t value, unsigned char* buffer, size_t bufferSize) { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
-	virtual void WriteI64(boost::int64_t value, unsigned char* buffer, size_t bufferSize) { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
-	virtual void WriteUI32(boost::uint32_t value, unsigned char* buffer, size_t bufferSize) { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
-	virtual void WriteI32(boost::int32_t value, unsigned char* buffer, size_t bufferSize) { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
-	virtual void WriteF(float value, unsigned char* buffer, size_t bufferSize) { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
-	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
-	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize) { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
+	virtual void WriteUI64(boost::uint64_t value, unsigned char* buffer, size_t bufferSize) const { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
+	virtual void WriteI64(boost::int64_t value, unsigned char* buffer, size_t bufferSize) const { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
+	virtual void WriteUI32(boost::uint32_t value, unsigned char* buffer, size_t bufferSize) const { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
+	virtual void WriteI32(boost::int32_t value, unsigned char* buffer, size_t bufferSize) const { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
+	virtual void WriteF(float value, unsigned char* buffer, size_t bufferSize) const { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
+	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) const { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
+	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize) const { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
 	
-	virtual boost::uint64_t ReadUI64(unsigned char* buffer, size_t bufferSize) { return static_cast<unsigned long long>(ReadBit(buffer, bufferSize)); }
-	virtual boost::int64_t ReadI64(unsigned char* buffer, size_t bufferSize) { return static_cast<long long>(ReadBit(buffer, bufferSize)); }
-	virtual boost::uint32_t ReadUI32(unsigned char* buffer, size_t bufferSize){ return static_cast<unsigned long>(ReadBit(buffer, bufferSize)); }
-	virtual boost::int32_t ReadI32(unsigned char* buffer, size_t bufferSize) { return static_cast<long>(ReadBit(buffer, bufferSize)); }
-	virtual float ReadF(unsigned char* buffer, size_t bufferSize) { return static_cast<float>(ReadBit(buffer, bufferSize)); }
-	virtual double ReadD(unsigned char* buffer, size_t bufferSize) { return static_cast<double>(ReadBit(buffer, bufferSize)); }
-	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) { return static_cast<bool>(ReadBit(buffer, bufferSize)); }
+	virtual boost::uint64_t ReadUI64(unsigned char* buffer, size_t bufferSize) const { return static_cast<unsigned long long>(ReadBit(buffer, bufferSize)); }
+	virtual boost::int64_t ReadI64(unsigned char* buffer, size_t bufferSize) const { return static_cast<long long>(ReadBit(buffer, bufferSize)); }
+	virtual boost::uint32_t ReadUI32(unsigned char* buffer, size_t bufferSize) const { return static_cast<unsigned long>(ReadBit(buffer, bufferSize)); }
+	virtual boost::int32_t ReadI32(unsigned char* buffer, size_t bufferSize) const { return static_cast<long>(ReadBit(buffer, bufferSize)); }
+	virtual float ReadF(unsigned char* buffer, size_t bufferSize) const { return static_cast<float>(ReadBit(buffer, bufferSize)); }
+	virtual double ReadD(unsigned char* buffer, size_t bufferSize) const { return static_cast<double>(ReadBit(buffer, bufferSize)); }
+	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) const { return static_cast<bool>(ReadBit(buffer, bufferSize)); }
 };
 
 template<typename T>
 struct SignExtensionPolicyNone
 {
 	SignExtensionPolicyNone(unsigned int ) { }
-	T Extend(T value) { return value; }
+	T Extend(T value) const { return value; }
 };
 
 template<typename T>
@@ -292,7 +292,7 @@ struct SignExtensionPolicyExtend
 	{
 		//create a mask that contains only 1 except for the lowest bitSize-1 bits
 	}
-	T Extend(T value) 
+	T Extend(T value) const 
 	{
 		//check whether the sign bit is set using the mask. If it is set, set all bits except for the lowest bitSize-1
 		//this is sufficient since we know that the bit at position bitSize (sign bit) is equal to 1
@@ -314,10 +314,10 @@ struct EndianessPolicyNoSwap
 		mask <<= bitSize;
 		mask = ~mask;
 	}
-	T Align(T value){ return value >> shift; }
-	T InverseAlign(T value) { return value << shift; }
-	T ApplyMask(T value) { return value & mask; }
-	T Swap(T value) { return value; }
+	T Align(T value) const{ return value >> shift; }
+	T InverseAlign(T value) const { return value << shift; }
+	T ApplyMask(T value) const { return value & mask; }
+	T Swap(T value) const { return value; }
 };
 
 template<typename T>
@@ -336,42 +336,42 @@ struct EndianessPolicySwap
 		mask <<= bitSize;
 		mask = ~mask;
 	}
-	T Align(T value)
+	T Align(T value) const
 	{ 
 		T result = value >> shiftR;
 		return result << shiftL; 
 	} //the lowest value bit of the BE value must be a bit 0 of a byte
-	T InverseAlign(T value) { return value << shift; }
-	T ApplyMask(T value) { return value & mask; }
-	T Swap(T value);
+	T InverseAlign(T value) const { return value << shift; }
+	T ApplyMask(T value) const { return value & mask; }
+	T Swap(T value) const;
 };
 
 template<>
-inline boost::uint8_t EndianessPolicySwap<boost::uint8_t>::Swap(boost::uint8_t value)
+inline boost::uint8_t EndianessPolicySwap<boost::uint8_t>::Swap(boost::uint8_t value) const
 {
 	return value;
 }
 
 template<>
-inline boost::uint16_t EndianessPolicySwap<boost::uint16_t>::Swap(boost::uint16_t value)
+inline boost::uint16_t EndianessPolicySwap<boost::uint16_t>::Swap(boost::uint16_t value) const
 {
 	return Swap16(value);
 }
 
 template<>
-inline boost::uint32_t EndianessPolicySwap<boost::uint32_t>::Swap(boost::uint32_t value)
+inline boost::uint32_t EndianessPolicySwap<boost::uint32_t>::Swap(boost::uint32_t value) const
 {
 	return Swap32(value);
 }
 
 template<>
-inline boost::uint64_t EndianessPolicySwap<boost::uint64_t>::Swap(boost::uint64_t value)
+inline boost::uint64_t EndianessPolicySwap<boost::uint64_t>::Swap(boost::uint64_t value) const
 {
 	return Swap64(value);
 }
 
 template<typename T>
-inline T EndianessPolicySwap<T>::Swap(T value)
+inline T EndianessPolicySwap<T>::Swap(T value) const
 {
 	throw std::logic_error("swaping not implemented");
 }
@@ -387,52 +387,52 @@ private:
 	unsigned int m_bitOffset;
 	unsigned int m_bytesToCopy;
 
-	internalBufferType Read(unsigned char* buffer, size_t bufferSize);
-	void Write(internalBufferType value, unsigned char* buffer, size_t bufferSize);
+	internalBufferType Read(unsigned char* buffer, size_t bufferSize) const;
+	void Write(internalBufferType value, unsigned char* buffer, size_t bufferSize) const;
 
 public:
 	GenericIntegerHandler(unsigned int startBit, unsigned int bitSize);
 	virtual ~GenericIntegerHandler() {}
 
-	virtual void WriteUI64(boost::uint64_t value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteI64(boost::int64_t value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteUI32(boost::uint32_t value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteI32(boost::int32_t value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteF(float value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
-	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize) { throw std::logic_error("not implemented"); }
+	virtual void WriteUI64(boost::uint64_t value, unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual void WriteI64(boost::int64_t value, unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual void WriteUI32(boost::uint32_t value, unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual void WriteI32(boost::int32_t value, unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual void WriteF(float value, unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
 	
-	virtual boost::uint64_t ReadUI64(unsigned char* buffer, size_t bufferSize) 
+	virtual boost::uint64_t ReadUI64(unsigned char* buffer, size_t bufferSize) const 
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
 		return static_cast<unsigned long long>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
-	virtual boost::int64_t ReadI64(unsigned char* buffer, size_t bufferSize) 
+	virtual boost::int64_t ReadI64(unsigned char* buffer, size_t bufferSize) const 
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
 		return static_cast<long long>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
-	virtual boost::uint32_t ReadUI32(unsigned char* buffer, size_t bufferSize) 
+	virtual boost::uint32_t ReadUI32(unsigned char* buffer, size_t bufferSize) const 
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
 		return static_cast<unsigned long>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
-	virtual boost::int32_t ReadI32(unsigned char* buffer, size_t bufferSize)
+	virtual boost::int32_t ReadI32(unsigned char* buffer, size_t bufferSize) const
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
 		return static_cast<long>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
-	virtual float ReadF(unsigned char* buffer, size_t bufferSize)
+	virtual float ReadF(unsigned char* buffer, size_t bufferSize) const
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
 		return static_cast<float>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
-	virtual double ReadD(unsigned char* buffer, size_t bufferSize)
+	virtual double ReadD(unsigned char* buffer, size_t bufferSize) const
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
 		return static_cast<double>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
-	virtual bool ReadB(unsigned char* buffer, size_t bufferSize)
+	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) const
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
 		return static_cast<bool>(*reinterpret_cast<reinterpretType*>(&result)); 
@@ -447,7 +447,7 @@ boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsign
 //************************** Implementation Section ***********************************************************
 
 template <typename T, typename intermediateType, typename swapPolicy>
-void AlignedDataHandler<T,intermediateType,swapPolicy>::WriteData(T value, unsigned char* buffer, size_t bufferSize)
+void AlignedDataHandler<T,intermediateType,swapPolicy>::WriteData(T value, unsigned char* buffer, size_t bufferSize) const
 {
 	assert(m_startByteOffset + sizeof(T) - 1 < bufferSize);
 	intermediateType tmp = *reinterpret_cast<intermediateType*>(&value);
@@ -457,7 +457,7 @@ void AlignedDataHandler<T,intermediateType,swapPolicy>::WriteData(T value, unsig
 }
 
 template <typename T, typename intermediateType, typename swapPolicy>
-T AlignedDataHandler<T,intermediateType,swapPolicy>::ReadData(unsigned char* buffer, size_t bufferSize)
+T AlignedDataHandler<T,intermediateType,swapPolicy>::ReadData(unsigned char* buffer, size_t bufferSize) const
 {
 	assert(m_startByteOffset + sizeof(T) - 1 < bufferSize);
 	intermediateType tmp = *reinterpret_cast<intermediateType*>(buffer+m_startByteOffset);
@@ -475,7 +475,7 @@ GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,signPol
 	assert(m_bytesToCopy <= sizeof(internalBufferType));
 }
 template<typename internalBufferType, typename reinterpretType, typename endianessPolicy, typename signPolicy>
-internalBufferType GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,signPolicy>::Read(unsigned char* buffer, size_t bufferSize)
+internalBufferType GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,signPolicy>::Read(unsigned char* buffer, size_t bufferSize) const
 {
 	//coyp into internal buffer
 	internalBufferType result = 0;
@@ -491,7 +491,7 @@ internalBufferType GenericIntegerHandler<internalBufferType,reinterpretType,endi
 }
 
 template<typename internalBufferType, typename reinterpretType, typename endianessPolicy, typename signPolicy>
-void GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,signPolicy>::Write(internalBufferType value, unsigned char* buffer, size_t bufferSize)
+void GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,signPolicy>::Write(internalBufferType value, unsigned char* buffer, size_t bufferSize) const
 {
 	//swap if necessary
 	auto tmp = Swap(value);
