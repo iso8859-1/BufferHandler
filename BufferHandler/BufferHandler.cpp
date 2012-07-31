@@ -1,4 +1,5 @@
 #include "BufferHandler.h"
+#include "BufferHandlerImplementation.h"
 
 /*
 Copyright (c) 2012, Tobias Langner
