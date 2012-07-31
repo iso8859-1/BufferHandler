@@ -225,13 +225,11 @@ struct EndianessPolicyNoSwap
 template<typename T>
 struct EndianessPolicySwap
 {
-	unsigned int shiftL;
-	unsigned int shiftR;
+	unsigned int shift;
 	T mask;
 
 	EndianessPolicySwap(unsigned int startBit, unsigned int bitSize) 
-		: shiftR( startBit % 8 )
-		, shiftL( (sizeof(T) - (bitSize + 7)/8)*8)
+		: shift( (sizeof(T) - (bitSize + 7)/8)*8 + startBit%8)
 		, mask( 0 )
 	{
 		mask = ~static_cast<T>(0);
@@ -240,8 +238,7 @@ struct EndianessPolicySwap
 	}
 	T Align(T value) const
 	{ 
-		T result = value >> shiftR;
-		return result << shiftL; 
+		return value >> shift; 
 	} //the lowest value bit of the BE value must be a bit 0 of a byte
 	T InverseAlign(T value) const { return value << shift; }
 	T ApplyMask(T value) const { return value & mask; }
@@ -375,10 +372,10 @@ internalBufferType GenericIntegerHandler<internalBufferType,reinterpretType,endi
 	//coyp into internal buffer
 	internalBufferType result = 0;
 	memcpy(&result,buffer+m_byteOffset,m_bytesToCopy);
-	//align (right if LE, left if BE)
-	result = Align(result);
 	//swap if necessary
 	result = Swap(result);
+	//align (right, with correction for swapping)
+	result = Align(result);
 	//apply mask (depending on alignment)
 	result = ApplyMask(result);
 	//sign extension if necessary
@@ -388,12 +385,13 @@ internalBufferType GenericIntegerHandler<internalBufferType,reinterpretType,endi
 template<typename internalBufferType, typename reinterpretType, typename endianessPolicy, typename signPolicy>
 void GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,signPolicy>::Write(internalBufferType value, unsigned char* buffer, size_t bufferSize) const
 {
-	//swap if necessary
-	auto tmp = Swap(value);
+	
 	//mask
-	tmp = ApplyMask(tmp);
+	auto  tmp = ApplyMask(tmp);
 	//align
-	tmp = InverseAlign(tmp);
+	tmp = Align(tmp);
+	//swap if necessary
+	tmp = Swap(value);
 	//bytewise or into place
 	for (unsigned int i=0; i<m_bytesToCopy; ++i)
 	{

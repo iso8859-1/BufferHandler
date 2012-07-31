@@ -146,8 +146,8 @@ BOOST_AUTO_TEST_CASE(EndianessPolicyNoSwapTest)
 	{
 		EndianessPolicyNoSwap<boost::uint32_t> policy(7,8);
 		boost::uint32_t value = 0xFFFFFFFF; // 8 1s hidden inside 4 bytes of 1s
-		auto result = policy.Align(value);
-		result = policy.Swap(result);
+		auto result = policy.Swap(value);
+		result = policy.Align(result);		
 		result = policy.ApplyMask(value);
 		BOOST_CHECK(result == 0xFF);
 	}
@@ -164,9 +164,9 @@ BOOST_AUTO_TEST_CASE(EndianessPolicySwapTest)
 	{
 		EndianessPolicySwap<boost::uint32_t> policy(7,16);
 		boost::uint32_t value = 0xFFFFFFFF; // 16 1s hidden inside 4 bytes of 1s
-		auto result = policy.Align(value);
+		auto result = policy.Swap(value);
 		BOOST_CHECK(result == 0xFFFF0000);
-		result = policy.Swap(result);
+		result = policy.Align(result);
 		result = policy.ApplyMask(result);
 		BOOST_CHECK(result == 0xFFFF);
 	}
