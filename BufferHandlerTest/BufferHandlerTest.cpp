@@ -155,7 +155,12 @@ BOOST_AUTO_TEST_CASE(EndianessPolicyNoSwapTest)
 
 BOOST_AUTO_TEST_CASE(EndianessPolicySwapTest)
 {
-	BOOST_CHECK(false);
+	EndianessPolicySwap<boost::uint16_t> policy(4,8);
+	boost::uint16_t value = 0xF00F;
+	auto result = policy.Swap(value);
+	BOOST_CHECK(result == 0x0FF0);
+	result = policy.Align(result);
+	BOOST_CHECK(result == 0xFF);
 }
 
 BOOST_AUTO_TEST_CASE(SignExtensionPolicyExtendTest)

@@ -229,7 +229,7 @@ struct EndianessPolicySwap
 	T mask;
 
 	EndianessPolicySwap(unsigned int startBit, unsigned int bitSize) 
-		: shift( (sizeof(T) - (bitSize + 7)/8)*8 + startBit%8)
+		: shift( (sizeof(T) - (bitSize+startBit + 7)/8)*8 + startBit%8)
 		, mask( 0 )
 	{
 		mask = ~static_cast<T>(0);
