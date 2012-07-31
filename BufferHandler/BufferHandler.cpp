@@ -124,6 +124,8 @@ boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsign
 {
 	if (sizeInBits == 0)
 	{
+		//this could be done as SingleInstance for the ZeroDataHandler
+		//but the drawback would be that this isn't threadsafe anymore.
 		return boost::shared_ptr<ZeroDataHandler>(new ZeroDataHandler());
 	}
 	else if (sizeInBits == 1)
