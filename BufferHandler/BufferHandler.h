@@ -220,7 +220,13 @@ public:
 };
 
 /**
-Factory method to create the appropriate reader/writer class
+Factory method to create the appropriate reader/writer class. The fastest implementation for the given combination of
+startbit, sizeInBits and DataType is chosen.
+
+@param startbit first bit of the data inside of the buffer
+@param sizeInBits number of bits for the data
+@param DataType determines how the data is interpreted (Integer / Float, Little or Big Endian)
+@return reader/writer for this field in the buffer
 */
 boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsigned int sizeInBits, DataType type);
 
