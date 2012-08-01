@@ -80,7 +80,7 @@ class AlignedDataHandler : public DataHandler
 
 	unsigned int m_startByteOffset;
 
-	T ReadData(unsigned char* buffer, size_t bufferSize) const;
+	T ReadData(const unsigned char* buffer, size_t bufferSize) const;
 	void WriteData(T value, unsigned char* buffer, size_t bufferSize) const;
 public:
 	AlignedDataHandler(unsigned int startBit) : m_startByteOffset(startBit / 8) 
@@ -97,13 +97,13 @@ public:
 	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) const { WriteData(static_cast<T>(value), buffer, bufferSize); }
 	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize) const { WriteData(static_cast<T>(value), buffer, bufferSize); }
 	
-	virtual boost::uint64_t ReadUI64(unsigned char* buffer, size_t bufferSize) const { return static_cast<unsigned long long>(ReadData(buffer, bufferSize)); }
-	virtual boost::int64_t ReadI64(unsigned char* buffer, size_t bufferSize) const { return static_cast<long long>(ReadData(buffer, bufferSize)); }
-	virtual boost::uint32_t ReadUI32(unsigned char* buffer, size_t bufferSize) const { return static_cast<unsigned long>(ReadData(buffer, bufferSize)); }
-	virtual boost::int32_t ReadI32(unsigned char* buffer, size_t bufferSize) const { return static_cast<long>(ReadData(buffer, bufferSize)); }
-	virtual float ReadF(unsigned char* buffer, size_t bufferSize) const { return static_cast<float>(ReadData(buffer, bufferSize)); }
-	virtual double ReadD(unsigned char* buffer, size_t bufferSize) const { return static_cast<double>(ReadData(buffer, bufferSize)); }
-	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) const { return static_cast<bool>(ReadData(buffer, bufferSize)); }
+	virtual boost::uint64_t ReadUI64(const unsigned char* buffer, size_t bufferSize) const { return static_cast<unsigned long long>(ReadData(buffer, bufferSize)); }
+	virtual boost::int64_t ReadI64(const unsigned char* buffer, size_t bufferSize) const { return static_cast<long long>(ReadData(buffer, bufferSize)); }
+	virtual boost::uint32_t ReadUI32(const unsigned char* buffer, size_t bufferSize) const { return static_cast<unsigned long>(ReadData(buffer, bufferSize)); }
+	virtual boost::int32_t ReadI32(const unsigned char* buffer, size_t bufferSize) const { return static_cast<long>(ReadData(buffer, bufferSize)); }
+	virtual float ReadF(const unsigned char* buffer, size_t bufferSize) const { return static_cast<float>(ReadData(buffer, bufferSize)); }
+	virtual double ReadD(const unsigned char* buffer, size_t bufferSize) const { return static_cast<double>(ReadData(buffer, bufferSize)); }
+	virtual bool ReadB(const unsigned char* buffer, size_t bufferSize) const { return static_cast<bool>(ReadData(buffer, bufferSize)); }
 };
 
 class ZeroDataHandler : public DataHandler
@@ -120,13 +120,13 @@ public:
 	virtual void WriteD(double , unsigned char* , size_t ) const  { }
 	virtual void WriteB(bool , unsigned char* , size_t ) const  { }
 	
-	virtual boost::uint64_t ReadUI64(unsigned char* , size_t ) const { return static_cast<unsigned long long>(0); }
-	virtual boost::int64_t ReadI64(unsigned char* , size_t ) const { return static_cast<long long>(0); }
-	virtual boost::uint32_t ReadUI32(unsigned char* , size_t ) const { return static_cast<unsigned long>(0); }
-	virtual boost::int32_t ReadI32(unsigned char* , size_t ) const { return static_cast<long>(0); }
-	virtual float ReadF(unsigned char* , size_t ) const { return static_cast<float>(0); }
-	virtual double ReadD(unsigned char* , size_t ) const { return static_cast<double>(0); }
-	virtual bool ReadB(unsigned char* , size_t ) const { return static_cast<bool>(0); }
+	virtual boost::uint64_t ReadUI64(const unsigned char* , size_t ) const { return static_cast<unsigned long long>(0); }
+	virtual boost::int64_t ReadI64(const unsigned char* , size_t ) const { return static_cast<long long>(0); }
+	virtual boost::uint32_t ReadUI32(const unsigned char* , size_t ) const { return static_cast<unsigned long>(0); }
+	virtual boost::int32_t ReadI32(const unsigned char* , size_t ) const { return static_cast<long>(0); }
+	virtual float ReadF(const unsigned char* , size_t ) const { return static_cast<float>(0); }
+	virtual double ReadD(const unsigned char* , size_t ) const { return static_cast<double>(0); }
+	virtual bool ReadB(const unsigned char* , size_t ) const { return static_cast<bool>(0); }
 };
 
 class BitDataHandler : public DataHandler
@@ -136,9 +136,9 @@ class BitDataHandler : public DataHandler
 	unsigned char m_readMask;
 	unsigned char m_writeMask;
 
-	bool ReadBit(unsigned char* buffer, size_t ) const
+	bool ReadBit(const unsigned char* buffer, size_t ) const
 	{
-		return ((*reinterpret_cast<unsigned char*>(buffer+m_startByteOffset)) & m_readMask) != 0;
+		return ((*reinterpret_cast<const unsigned char*>(buffer+m_startByteOffset)) & m_readMask) != 0;
 	}
 	void WriteBit(bool value, unsigned char* buffer, size_t ) const
 	{
@@ -170,13 +170,13 @@ public:
 	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) const { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
 	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize) const { WriteBit(static_cast<bool>(value), buffer, bufferSize); }
 	
-	virtual boost::uint64_t ReadUI64(unsigned char* buffer, size_t bufferSize) const { return static_cast<unsigned long long>(ReadBit(buffer, bufferSize)); }
-	virtual boost::int64_t ReadI64(unsigned char* buffer, size_t bufferSize) const { return static_cast<long long>(ReadBit(buffer, bufferSize)); }
-	virtual boost::uint32_t ReadUI32(unsigned char* buffer, size_t bufferSize) const { return static_cast<unsigned long>(ReadBit(buffer, bufferSize)); }
-	virtual boost::int32_t ReadI32(unsigned char* buffer, size_t bufferSize) const { return static_cast<long>(ReadBit(buffer, bufferSize)); }
-	virtual float ReadF(unsigned char* buffer, size_t bufferSize) const { return static_cast<float>(ReadBit(buffer, bufferSize)); }
-	virtual double ReadD(unsigned char* buffer, size_t bufferSize) const { return static_cast<double>(ReadBit(buffer, bufferSize)); }
-	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) const { return static_cast<bool>(ReadBit(buffer, bufferSize)); }
+	virtual boost::uint64_t ReadUI64(const unsigned char* buffer, size_t bufferSize) const { return static_cast<unsigned long long>(ReadBit(buffer, bufferSize)); }
+	virtual boost::int64_t ReadI64(const unsigned char* buffer, size_t bufferSize) const { return static_cast<long long>(ReadBit(buffer, bufferSize)); }
+	virtual boost::uint32_t ReadUI32(const unsigned char* buffer, size_t bufferSize) const { return static_cast<unsigned long>(ReadBit(buffer, bufferSize)); }
+	virtual boost::int32_t ReadI32(const unsigned char* buffer, size_t bufferSize) const { return static_cast<long>(ReadBit(buffer, bufferSize)); }
+	virtual float ReadF(const unsigned char* buffer, size_t bufferSize) const { return static_cast<float>(ReadBit(buffer, bufferSize)); }
+	virtual double ReadD(const unsigned char* buffer, size_t bufferSize) const { return static_cast<double>(ReadBit(buffer, bufferSize)); }
+	virtual bool ReadB(const unsigned char* buffer, size_t bufferSize) const { return static_cast<bool>(ReadBit(buffer, bufferSize)); }
 };
 
 template<typename T>
@@ -286,7 +286,7 @@ private:
 	unsigned int m_bitOffset;
 	unsigned int m_bytesToCopy;
 
-	internalBufferType Read(unsigned char* buffer, size_t bufferSize) const;
+	internalBufferType Read(const unsigned char* buffer, size_t bufferSize) const;
 	void Write(internalBufferType value, unsigned char* buffer, size_t bufferSize) const;
 
 public:
@@ -301,37 +301,37 @@ public:
 	virtual void WriteD(double value, unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
 	virtual void WriteB(bool value, unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
 	
-	virtual boost::uint64_t ReadUI64(unsigned char* buffer, size_t bufferSize) const 
+	virtual boost::uint64_t ReadUI64(const unsigned char* buffer, size_t bufferSize) const 
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
 		return static_cast<unsigned long long>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
-	virtual boost::int64_t ReadI64(unsigned char* buffer, size_t bufferSize) const 
+	virtual boost::int64_t ReadI64(const unsigned char* buffer, size_t bufferSize) const 
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
 		return static_cast<long long>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
-	virtual boost::uint32_t ReadUI32(unsigned char* buffer, size_t bufferSize) const 
+	virtual boost::uint32_t ReadUI32(const unsigned char* buffer, size_t bufferSize) const 
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
 		return static_cast<unsigned long>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
-	virtual boost::int32_t ReadI32(unsigned char* buffer, size_t bufferSize) const
+	virtual boost::int32_t ReadI32(const unsigned char* buffer, size_t bufferSize) const
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
 		return static_cast<long>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
-	virtual float ReadF(unsigned char* buffer, size_t bufferSize) const
+	virtual float ReadF(const unsigned char* buffer, size_t bufferSize) const
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
 		return static_cast<float>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
-	virtual double ReadD(unsigned char* buffer, size_t bufferSize) const
+	virtual double ReadD(const unsigned char* buffer, size_t bufferSize) const
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
 		return static_cast<double>(*reinterpret_cast<reinterpretType*>(&result)); 
 	}
-	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) const
+	virtual bool ReadB(const unsigned char* buffer, size_t bufferSize) const
 	{ 
 		internalBufferType result = Read(buffer,bufferSize);
 		return static_cast<bool>(*reinterpret_cast<reinterpretType*>(&result)); 
@@ -349,10 +349,10 @@ void AlignedDataHandler<T,intermediateType,swapPolicy>::WriteData(T value, unsig
 }
 
 template <typename T, typename intermediateType, typename swapPolicy>
-T AlignedDataHandler<T,intermediateType,swapPolicy>::ReadData(unsigned char* buffer, size_t bufferSize) const
+T AlignedDataHandler<T,intermediateType,swapPolicy>::ReadData(const unsigned char* buffer, size_t bufferSize) const
 {
 	assert(m_startByteOffset + sizeof(T) - 1 < bufferSize);
-	intermediateType tmp = *reinterpret_cast<intermediateType*>(buffer+m_startByteOffset);
+	intermediateType tmp = *reinterpret_cast<const intermediateType*>(buffer+m_startByteOffset);
 	intermediateType result = swapPolicy::Swap(tmp);
 	return *reinterpret_cast<T*>(&result);
 }
@@ -367,7 +367,7 @@ GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,signPol
 	assert(m_bytesToCopy <= sizeof(internalBufferType));
 }
 template<typename internalBufferType, typename reinterpretType, typename endianessPolicy, typename signPolicy>
-internalBufferType GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,signPolicy>::Read(unsigned char* buffer, size_t bufferSize) const
+internalBufferType GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,signPolicy>::Read(const unsigned char* buffer, size_t bufferSize) const
 {
 	//coyp into internal buffer
 	internalBufferType result = 0;

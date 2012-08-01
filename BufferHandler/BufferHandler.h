@@ -171,7 +171,7 @@ public:
 	@param bufferSize size of the buffer
 	@return converted value from the buffer
 	*/
-	virtual boost::uint64_t ReadUI64(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual boost::uint64_t ReadUI64(const unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
 	/**
 	Reads the value at the slot specified during creation using \ref CreateBufferHandler and converts it to a 64bit 
 	integer.
@@ -179,7 +179,7 @@ public:
 	@param bufferSize size of the buffer
 	@return converted value from the buffer
 	*/
-	virtual boost::int64_t ReadI64(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual boost::int64_t ReadI64(const unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
 	/**
 	Reads the value at the slot specified during creation using \ref CreateBufferHandler and converts it to a 32bit unsigned
 	integer.
@@ -187,7 +187,7 @@ public:
 	@param bufferSize size of the buffer
 	@return converted value from the buffer
 	*/
-	virtual boost::uint32_t ReadUI32(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual boost::uint32_t ReadUI32(const unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
 	/**
 	Reads the value at the slot specified during creation using \ref CreateBufferHandler and converts it to a 32bit 
 	integer.
@@ -195,28 +195,28 @@ public:
 	@param bufferSize size of the buffer
 	@return converted value from the buffer
 	*/
-	virtual boost::int32_t ReadI32(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual boost::int32_t ReadI32(const unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
 	/**
 	Reads the value at the slot specified during creation using \ref CreateBufferHandler and converts it to a 32bit float
 	@param buffer buffer to be read from
 	@param bufferSize size of the buffer
 	@return converted value from the buffer
 	*/
-	virtual float ReadF(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual float ReadF(const unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
 	/**
 	Reads the value at the slot specified during creation using \ref CreateBufferHandler and converts it to a 64bit double
 	@param buffer buffer to be read from
 	@param bufferSize size of the buffer
 	@return converted value from the buffer
 	*/
-	virtual double ReadD(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
+	virtual double ReadD(const unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
 	/**
 	Reads the value at the slot specified during creation using \ref CreateBufferHandler and converts it to a 1bit bool
 	@param buffer buffer to be read from
 	@param bufferSize size of the buffer
 	@return converted value from the buffer
 	*/
-	virtual bool ReadB(unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }	
+	virtual bool ReadB(const unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }	
 };
 
 /**
