@@ -597,8 +597,8 @@ static boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit,
 			return boost::shared_ptr<DataHandler>(new DataHandler());
 		}
 	}
-	//default implementation - does only throw exceptions.
-	return boost::shared_ptr<DataHandler>(new DataHandler());
+	//nothing found, return empty pointer
+	return boost::shared_ptr<DataHandler>();
 }
 
 #pragma warning( pop )
