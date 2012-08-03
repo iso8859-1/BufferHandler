@@ -594,7 +594,7 @@ static boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit,
 				}
 			}
 		default:
-			return boost::shared_ptr<DataHandler>(new DataHandler());
+			return boost::shared_ptr<DataHandler>();
 		}
 	}
 	//nothing found, return empty pointer
