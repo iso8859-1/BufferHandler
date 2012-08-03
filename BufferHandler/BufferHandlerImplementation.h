@@ -399,5 +399,207 @@ void GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,si
 	}
 }
 
+static boost::shared_ptr<DataHandler> CreateAlignedDataHandler(unsigned int startbit, unsigned int sizeInBits, DataType type)
+{
+	assert(sizeInBits == 8 || sizeInBits == 16 || sizeInBits == 32 || sizeInBits ==64);
+	assert(startbit % 8 == 0);
+	switch(type)
+	{
+	case UnsignedIntegerLittleEndian:
+		switch(sizeInBits)
+		{
+		case 8:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint8_t,boost::uint8_t,SwapPolicyNone<boost::uint8_t>>(startbit));
+		case 16:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint16_t,boost::uint16_t,SwapPolicyNone<boost::uint16_t>>(startbit));
+		case 32:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint32_t,boost::uint32_t,SwapPolicyNone<boost::uint32_t>>(startbit));
+		case 64:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint64_t,boost::uint64_t,SwapPolicyNone<boost::uint64_t>>(startbit));
+		default:
+			throw std::logic_error("not valid");
+		}
+	case SignedIntegerLittleEndian:
+		switch(sizeInBits)
+		{
+		case 8:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int8_t,boost::uint8_t,SwapPolicyNone<boost::uint8_t>>(startbit));
+		case 16:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int16_t,boost::uint16_t,SwapPolicyNone<boost::uint16_t>>(startbit));
+		case 32:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int32_t,boost::uint32_t,SwapPolicyNone<boost::uint32_t>>(startbit));
+		case 64:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int64_t,boost::uint64_t,SwapPolicyNone<boost::uint64_t>>(startbit));
+		default:
+			throw std::logic_error("not valid");
+		}
+	case FloatLittleEndian:
+		switch(sizeInBits)
+		{
+		case 32:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<float,boost::uint32_t,SwapPolicyNone<boost::uint32_t>>(startbit));
+		case 64:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<double,boost::uint64_t,SwapPolicyNone<boost::uint64_t>>(startbit));
+		default:
+			throw std::logic_error("not valid");
+		}
+	case UnsignedIntegerBigEndian:
+		switch(sizeInBits)
+		{
+		case 8:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint8_t,boost::uint8_t,SwapPolicySwap<boost::uint8_t>>(startbit));
+		case 16:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint16_t,boost::uint16_t,SwapPolicySwap<boost::uint16_t>>(startbit));
+		case 32:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint32_t,boost::uint32_t,SwapPolicySwap<boost::uint32_t>>(startbit));
+		case 64:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint64_t,boost::uint64_t,SwapPolicySwap<boost::uint64_t>>(startbit));
+		default:
+			throw std::logic_error("not valid");
+		}
+	case SignedIntegerBigEndian:
+		switch(sizeInBits)
+		{
+		case 8:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int8_t,boost::uint8_t,SwapPolicySwap<boost::uint8_t>>(startbit));
+		case 16:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int16_t,boost::uint16_t,SwapPolicySwap<boost::uint16_t>>(startbit));
+		case 32:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int32_t,boost::uint32_t,SwapPolicySwap<boost::uint32_t>>(startbit));
+		case 64:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int64_t,boost::uint64_t,SwapPolicySwap<boost::uint64_t>>(startbit));
+		default:
+			throw std::logic_error("not valid");
+		}
+	case FloatBigEndian:
+		switch(sizeInBits)
+		{
+		case 32:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<float,boost::uint32_t,SwapPolicySwap<boost::uint32_t>>(startbit));
+		case 64:
+			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<double,boost::uint64_t,SwapPolicySwap<boost::uint64_t>>(startbit));
+		default:
+			throw std::logic_error("not valid");
+		}
+	default:
+		throw std::logic_error("not valid");
+	}
+}
+
+static boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsigned int sizeInBits, DataType type)
+{
+	if (sizeInBits == 0)
+	{
+		//this could be done as SingleInstance for the ZeroDataHandler
+		//but the drawback would be that this isn't threadsafe anymore.
+		return boost::shared_ptr<ZeroDataHandler>(new ZeroDataHandler());
+	}
+	else if (sizeInBits == 1)
+	{
+		return boost::shared_ptr<BitDataHandler>(new BitDataHandler(startbit));
+	}
+	else if ((sizeInBits == 8 || sizeInBits == 16 || sizeInBits == 32 || sizeInBits ==64) && startbit % 8 == 0)
+	{
+		try
+		{
+			return CreateAlignedDataHandler(startbit, sizeInBits, type);
+		} 
+		catch(const std::logic_error&)
+		{
+			//try next handler type
+		}
+	}
+	else
+	{
+		switch (type)
+		{
+		case (UnsignedIntegerLittleEndian):
+			{
+				if (sizeInBits+(startbit%8)<=32)
+				{
+					typedef GenericIntegerHandler<boost::uint32_t,boost::uint32_t,EndianessPolicyNoSwap<boost::uint32_t>,SignExtensionPolicyNone<boost::uint32_t>> Handler;
+					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+				else
+				{
+					typedef GenericIntegerHandler<boost::uint64_t,boost::uint64_t,EndianessPolicyNoSwap<boost::uint64_t>,SignExtensionPolicyNone<boost::uint64_t>> Handler;
+					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+			}
+		case (UnsignedIntegerBigEndian):
+			{
+				if (sizeInBits+(startbit%8)<=32)
+				{
+					typedef GenericIntegerHandler<boost::uint32_t,boost::uint32_t,EndianessPolicySwap<boost::uint32_t>,SignExtensionPolicyNone<boost::uint32_t>> Handler;
+					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+				else
+				{
+					typedef GenericIntegerHandler<boost::uint64_t,boost::uint64_t,EndianessPolicySwap<boost::uint64_t>,SignExtensionPolicyNone<boost::uint64_t>> Handler;
+					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+			}
+		case (SignedIntegerLittleEndian):
+			{
+				if (sizeInBits+(startbit%8)<=32)
+				{
+					typedef GenericIntegerHandler<boost::int32_t,boost::int32_t,EndianessPolicyNoSwap<boost::uint32_t>,SignExtensionPolicyExtend<boost::uint32_t>> Handler;
+					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+				else
+				{
+					typedef GenericIntegerHandler<boost::int64_t,boost::int64_t,EndianessPolicyNoSwap<boost::uint64_t>,SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+			}
+		case (SignedIntegerBigEndian):
+			{
+				if (sizeInBits+(startbit%8)<=32)
+				{
+					typedef GenericIntegerHandler<boost::int32_t,boost::int32_t,EndianessPolicySwap<boost::uint32_t>,SignExtensionPolicyExtend<boost::uint32_t>> Handler;
+					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+				else
+				{
+					typedef GenericIntegerHandler<boost::int64_t,boost::int64_t,EndianessPolicySwap<boost::uint64_t>,SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+			}
+		case (FloatLittleEndian):
+			{
+				//if (sizeInBits+(startbit%8)<=32) --> can't happen as floats are always 32 bits and startbit%8 == 0 is aligned
+				if (sizeInBits == 32)
+				{
+					typedef GenericIntegerHandler<boost::int64_t,float,EndianessPolicyNoSwap<boost::uint64_t>,SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+				else
+				{
+					typedef GenericIntegerHandler<boost::int64_t,double,EndianessPolicyNoSwap<boost::uint64_t>,SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+			}
+		case (FloatBigEndian):
+			{
+				//if (sizeInBits+(startbit%8)<=32) --> can't happen as floats are always 32 bits and startbit%8 == 0 is aligned
+				if (sizeInBits == 32)
+				{
+					typedef GenericIntegerHandler<boost::int64_t,float,EndianessPolicySwap<boost::uint64_t>,SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+				else
+				{
+					typedef GenericIntegerHandler<boost::int64_t,double,EndianessPolicySwap<boost::uint64_t>,SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
+				}
+			}
+		default:
+			return boost::shared_ptr<DataHandler>(new DataHandler());
+		}
+	}
+	//default implementation - does only throw exceptions.
+	return boost::shared_ptr<DataHandler>(new DataHandler());
+}
+
 #pragma warning( pop )
 #endif

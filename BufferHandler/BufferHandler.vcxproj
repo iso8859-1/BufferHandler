@@ -79,9 +79,6 @@
     <ClInclude Include="BufferHandlerImplementation.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BufferHandler.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\Readme.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
