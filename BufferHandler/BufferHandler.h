@@ -37,6 +37,9 @@ either expressed or implied, of the FreeBSD Project.
 #include <boost/static_assert.hpp>
 
 
+namespace BufferHandler
+{
+
 /**
 enum indicating the datatype inside the buffer
 */
@@ -229,5 +232,7 @@ startbit, sizeInBits and DataType is chosen.
 @return reader/writer for this field in the buffer
 */
 boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsigned int sizeInBits, DataType type);
+
+}
 
 #endif

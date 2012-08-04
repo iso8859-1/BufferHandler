@@ -36,6 +36,8 @@ either expressed or implied, of the FreeBSD Project.
 #include "BufferHandler.h"
 #include "BufferHandlerImplementation.h"
 
+using namespace BufferHandler;
+
 #pragma region Helper Classes
 
 class TestBuffer

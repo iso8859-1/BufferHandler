@@ -49,19 +49,19 @@ struct SwapPolicySwap
 template<>
 struct SwapPolicySwap<boost::uint16_t>
 {
-	inline static boost::uint16_t Swap(boost::uint16_t src) { return Swap16(src); }
+	inline static boost::uint16_t Swap(boost::uint16_t src) { return BufferHandler::Swap16(src); }
 };
 
 template<>
 struct SwapPolicySwap<boost::uint32_t>
 {
-	inline static boost::uint32_t Swap(boost::uint32_t src) { return Swap32(src); }
+	inline static boost::uint32_t Swap(boost::uint32_t src) { return BufferHandler::Swap32(src); }
 };
 
 template<>
 struct SwapPolicySwap<boost::uint64_t>
 {
-	inline static boost::uint64_t Swap(boost::uint64_t src) { return Swap64(src); }
+	inline static boost::uint64_t Swap(boost::uint64_t src) { return BufferHandler::Swap64(src); }
 };
 
 template<>
@@ -74,7 +74,7 @@ struct SwapPolicySwap<boost::uint8_t>
 
 
 template <typename T, typename intermediateType, typename swapPolicy>
-class AlignedDataHandler : public DataHandler
+class AlignedDataHandler : public BufferHandler::DataHandler
 {
 	BOOST_STATIC_ASSERT(sizeof(T)==sizeof(intermediateType));
 
@@ -106,7 +106,7 @@ public:
 	virtual bool ReadB(const unsigned char* buffer, size_t bufferSize) const { return static_cast<bool>(ReadData(buffer, bufferSize)); }
 };
 
-class ZeroDataHandler : public DataHandler
+class ZeroDataHandler : public BufferHandler::DataHandler
 {
 public:
 	ZeroDataHandler() {}
@@ -129,7 +129,7 @@ public:
 	virtual bool ReadB(const unsigned char* , size_t ) const { return static_cast<bool>(0); }
 };
 
-class BitDataHandler : public DataHandler
+class BitDataHandler : public BufferHandler::DataHandler
 {
 	unsigned int m_startByteOffset;
 	unsigned int m_bitOffsetInsideByte;
@@ -254,19 +254,19 @@ inline boost::uint8_t EndianessPolicySwap<boost::uint8_t>::Swap(boost::uint8_t v
 template<>
 inline boost::uint16_t EndianessPolicySwap<boost::uint16_t>::Swap(boost::uint16_t value) const
 {
-	return Swap16(value);
+	return BufferHandler::Swap16(value);
 }
 
 template<>
 inline boost::uint32_t EndianessPolicySwap<boost::uint32_t>::Swap(boost::uint32_t value) const
 {
-	return Swap32(value);
+	return BufferHandler::Swap32(value);
 }
 
 template<>
 inline boost::uint64_t EndianessPolicySwap<boost::uint64_t>::Swap(boost::uint64_t value) const
 {
-	return Swap64(value);
+	return BufferHandler::Swap64(value);
 }
 
 template<typename T>
@@ -279,7 +279,7 @@ inline T EndianessPolicySwap<T>::Swap(T value) const
 	This is the slowest possible implementation for reading. Reads using memcopy - this should always work. Should be taken as seldom as possible.
 */
 template<typename internalBufferType, typename reinterpretType, typename endianessPolicy, typename signPolicy>
-class GenericIntegerHandler : public DataHandler, private endianessPolicy, private signPolicy
+class GenericIntegerHandler : public BufferHandler::DataHandler, private endianessPolicy, private signPolicy
 {
 private:
 	unsigned int m_byteOffset;
@@ -399,85 +399,85 @@ void GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,si
 	}
 }
 
-static boost::shared_ptr<DataHandler> CreateAlignedDataHandler(unsigned int startbit, unsigned int sizeInBits, DataType type)
+static boost::shared_ptr<BufferHandler::DataHandler> CreateAlignedDataHandler(unsigned int startbit, unsigned int sizeInBits, BufferHandler::DataType type)
 {
 	assert(sizeInBits == 8 || sizeInBits == 16 || sizeInBits == 32 || sizeInBits ==64);
 	assert(startbit % 8 == 0);
 	switch(type)
 	{
-	case UnsignedIntegerLittleEndian:
+	case BufferHandler::UnsignedIntegerLittleEndian:
 		switch(sizeInBits)
 		{
 		case 8:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint8_t,boost::uint8_t,SwapPolicyNone<boost::uint8_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<boost::uint8_t,boost::uint8_t,SwapPolicyNone<boost::uint8_t>>(startbit));
 		case 16:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint16_t,boost::uint16_t,SwapPolicyNone<boost::uint16_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<boost::uint16_t,boost::uint16_t,SwapPolicyNone<boost::uint16_t>>(startbit));
 		case 32:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint32_t,boost::uint32_t,SwapPolicyNone<boost::uint32_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<boost::uint32_t,boost::uint32_t,SwapPolicyNone<boost::uint32_t>>(startbit));
 		case 64:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint64_t,boost::uint64_t,SwapPolicyNone<boost::uint64_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<boost::uint64_t,boost::uint64_t,SwapPolicyNone<boost::uint64_t>>(startbit));
 		default:
 			throw std::logic_error("not valid");
 		}
-	case SignedIntegerLittleEndian:
+	case BufferHandler::SignedIntegerLittleEndian:
 		switch(sizeInBits)
 		{
 		case 8:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int8_t,boost::uint8_t,SwapPolicyNone<boost::uint8_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<boost::int8_t,boost::uint8_t,SwapPolicyNone<boost::uint8_t>>(startbit));
 		case 16:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int16_t,boost::uint16_t,SwapPolicyNone<boost::uint16_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<boost::int16_t,boost::uint16_t,SwapPolicyNone<boost::uint16_t>>(startbit));
 		case 32:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int32_t,boost::uint32_t,SwapPolicyNone<boost::uint32_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<boost::int32_t,boost::uint32_t,SwapPolicyNone<boost::uint32_t>>(startbit));
 		case 64:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int64_t,boost::uint64_t,SwapPolicyNone<boost::uint64_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<boost::int64_t,boost::uint64_t,SwapPolicyNone<boost::uint64_t>>(startbit));
 		default:
 			throw std::logic_error("not valid");
 		}
-	case FloatLittleEndian:
+	case BufferHandler::FloatLittleEndian:
 		switch(sizeInBits)
 		{
 		case 32:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<float,boost::uint32_t,SwapPolicyNone<boost::uint32_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<float,boost::uint32_t,SwapPolicyNone<boost::uint32_t>>(startbit));
 		case 64:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<double,boost::uint64_t,SwapPolicyNone<boost::uint64_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<double,boost::uint64_t,SwapPolicyNone<boost::uint64_t>>(startbit));
 		default:
 			throw std::logic_error("not valid");
 		}
-	case UnsignedIntegerBigEndian:
+	case BufferHandler::UnsignedIntegerBigEndian:
 		switch(sizeInBits)
 		{
 		case 8:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint8_t,boost::uint8_t,SwapPolicySwap<boost::uint8_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<boost::uint8_t,boost::uint8_t,SwapPolicySwap<boost::uint8_t>>(startbit));
 		case 16:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint16_t,boost::uint16_t,SwapPolicySwap<boost::uint16_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<boost::uint16_t,boost::uint16_t,SwapPolicySwap<boost::uint16_t>>(startbit));
 		case 32:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint32_t,boost::uint32_t,SwapPolicySwap<boost::uint32_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<boost::uint32_t,boost::uint32_t,SwapPolicySwap<boost::uint32_t>>(startbit));
 		case 64:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::uint64_t,boost::uint64_t,SwapPolicySwap<boost::uint64_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<boost::uint64_t,boost::uint64_t,SwapPolicySwap<boost::uint64_t>>(startbit));
 		default:
 			throw std::logic_error("not valid");
 		}
-	case SignedIntegerBigEndian:
+	case BufferHandler::SignedIntegerBigEndian:
 		switch(sizeInBits)
 		{
 		case 8:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int8_t,boost::uint8_t,SwapPolicySwap<boost::uint8_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<boost::int8_t,boost::uint8_t,SwapPolicySwap<boost::uint8_t>>(startbit));
 		case 16:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int16_t,boost::uint16_t,SwapPolicySwap<boost::uint16_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<boost::int16_t,boost::uint16_t,SwapPolicySwap<boost::uint16_t>>(startbit));
 		case 32:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int32_t,boost::uint32_t,SwapPolicySwap<boost::uint32_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<boost::int32_t,boost::uint32_t,SwapPolicySwap<boost::uint32_t>>(startbit));
 		case 64:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<boost::int64_t,boost::uint64_t,SwapPolicySwap<boost::uint64_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<boost::int64_t,boost::uint64_t,SwapPolicySwap<boost::uint64_t>>(startbit));
 		default:
 			throw std::logic_error("not valid");
 		}
-	case FloatBigEndian:
+	case BufferHandler::FloatBigEndian:
 		switch(sizeInBits)
 		{
 		case 32:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<float,boost::uint32_t,SwapPolicySwap<boost::uint32_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<float,boost::uint32_t,SwapPolicySwap<boost::uint32_t>>(startbit));
 		case 64:
-			return boost::shared_ptr<DataHandler>(new AlignedDataHandler<double,boost::uint64_t,SwapPolicySwap<boost::uint64_t>>(startbit));
+			return boost::shared_ptr<BufferHandler::DataHandler>(new AlignedDataHandler<double,boost::uint64_t,SwapPolicySwap<boost::uint64_t>>(startbit));
 		default:
 			throw std::logic_error("not valid");
 		}
@@ -486,7 +486,9 @@ static boost::shared_ptr<DataHandler> CreateAlignedDataHandler(unsigned int star
 	}
 }
 
-static boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit, unsigned int sizeInBits, DataType type)
+namespace BufferHandler
+{
+static boost::shared_ptr<BufferHandler::DataHandler> CreateBufferHandler(unsigned int startbit, unsigned int sizeInBits, BufferHandler::DataType type)
 {
 	if (sizeInBits == 0)
 	{
@@ -513,7 +515,7 @@ static boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit,
 	{
 		switch (type)
 		{
-		case (UnsignedIntegerLittleEndian):
+		case (BufferHandler::UnsignedIntegerLittleEndian):
 			{
 				if (sizeInBits+(startbit%8)<=32)
 				{
@@ -526,7 +528,7 @@ static boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit,
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 			}
-		case (UnsignedIntegerBigEndian):
+		case (BufferHandler::UnsignedIntegerBigEndian):
 			{
 				if (sizeInBits+(startbit%8)<=32)
 				{
@@ -539,7 +541,7 @@ static boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit,
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 			}
-		case (SignedIntegerLittleEndian):
+		case (BufferHandler::SignedIntegerLittleEndian):
 			{
 				if (sizeInBits+(startbit%8)<=32)
 				{
@@ -552,7 +554,7 @@ static boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit,
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 			}
-		case (SignedIntegerBigEndian):
+		case (BufferHandler::SignedIntegerBigEndian):
 			{
 				if (sizeInBits+(startbit%8)<=32)
 				{
@@ -565,7 +567,7 @@ static boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit,
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 			}
-		case (FloatLittleEndian):
+		case (BufferHandler::FloatLittleEndian):
 			{
 				//if (sizeInBits+(startbit%8)<=32) --> can't happen as floats are always 32 bits and startbit%8 == 0 is aligned
 				if (sizeInBits == 32)
@@ -579,7 +581,7 @@ static boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit,
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 			}
-		case (FloatBigEndian):
+		case (BufferHandler::FloatBigEndian):
 			{
 				//if (sizeInBits+(startbit%8)<=32) --> can't happen as floats are always 32 bits and startbit%8 == 0 is aligned
 				if (sizeInBits == 32)
@@ -594,11 +596,12 @@ static boost::shared_ptr<DataHandler> CreateBufferHandler(unsigned int startbit,
 				}
 			}
 		default:
-			return boost::shared_ptr<DataHandler>();
+			return boost::shared_ptr<BufferHandler::DataHandler>();
 		}
 	}
 	//nothing found, return empty pointer
-	return boost::shared_ptr<DataHandler>();
+	return boost::shared_ptr<BufferHandler::DataHandler>();
+}
 }
 
 #pragma warning( pop )
