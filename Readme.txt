@@ -1,6 +1,6 @@
 BufferHandler
 
-a small library for fast reading and writing of data from / into binary buffers. The code of this library is published under the FreeBSD License.
+a small header only library for fast reading and writing of data from / into binary buffers. The code of this library is published under the FreeBSD License.
 
 Copyright (c) 2012, Tobias Langner
 All rights reserved.

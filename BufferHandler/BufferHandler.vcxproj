@@ -76,7 +76,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="BufferHandler.h" />
-    <ClInclude Include="BufferHandlerImplementation.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Readme.txt" />

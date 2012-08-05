@@ -34,9 +34,9 @@ either expressed or implied, of the FreeBSD Project.
 
 #include <boost/smart_ptr.hpp>
 #include "BufferHandler.h"
-#include "BufferHandlerImplementation.h"
 
 using namespace BufferHandler;
+using namespace BufferHandler::Implementation;
 
 #pragma region Helper Classes
 
