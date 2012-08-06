@@ -484,7 +484,7 @@ inline T EndianessPolicySwap<T>::Swap(T value) const
 	This is the slowest possible implementation for reading. Reads using memcopy - this should always work. Should be taken as seldom as possible.
 */
 template<typename internalBufferType, typename reinterpretType, typename endianessPolicy, typename signPolicy>
-class GenericIntegerHandler : public BufferHandler::DataHandler, private endianessPolicy, private signPolicy
+class GenericHandler : public BufferHandler::DataHandler, private endianessPolicy, private signPolicy
 {
 private:
 	unsigned int m_byteOffset;
@@ -495,8 +495,8 @@ private:
 	void Write(internalBufferType value, unsigned char* buffer, size_t bufferSize) const;
 
 public:
-	GenericIntegerHandler(unsigned int startBit, unsigned int bitSize);
-	virtual ~GenericIntegerHandler() {}
+	GenericHandler(unsigned int startBit, unsigned int bitSize);
+	virtual ~GenericHandler() {}
 
 	virtual void WriteUI64(boost::uint64_t value, unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
 	virtual void WriteI64(boost::int64_t value, unsigned char* buffer, size_t bufferSize) const { throw std::logic_error("not implemented"); }
@@ -563,7 +563,7 @@ T AlignedDataHandler<T,intermediateType,swapPolicy>::ReadData(const unsigned cha
 }
 
 template<typename internalBufferType, typename reinterpretType, typename endianessPolicy, typename signPolicy>
-GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,signPolicy>::GenericIntegerHandler(unsigned int startBit, unsigned int bitSize)
+GenericHandler<internalBufferType,reinterpretType,endianessPolicy,signPolicy>::GenericHandler(unsigned int startBit, unsigned int bitSize)
 	: signPolicy(bitSize), endianessPolicy(startBit, bitSize)
 	, m_byteOffset(startBit / 8)
 	, m_bitOffset(startBit % 8)
@@ -572,7 +572,7 @@ GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,signPol
 	assert(m_bytesToCopy <= sizeof(internalBufferType));
 }
 template<typename internalBufferType, typename reinterpretType, typename endianessPolicy, typename signPolicy>
-internalBufferType GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,signPolicy>::Read(const unsigned char* buffer, size_t bufferSize) const
+internalBufferType GenericHandler<internalBufferType,reinterpretType,endianessPolicy,signPolicy>::Read(const unsigned char* buffer, size_t bufferSize) const
 {
 	//coyp into internal buffer
 	internalBufferType result = 0;
@@ -588,7 +588,7 @@ internalBufferType GenericIntegerHandler<internalBufferType,reinterpretType,endi
 }
 
 template<typename internalBufferType, typename reinterpretType, typename endianessPolicy, typename signPolicy>
-void GenericIntegerHandler<internalBufferType,reinterpretType,endianessPolicy,signPolicy>::Write(internalBufferType value, unsigned char* buffer, size_t bufferSize) const
+void GenericHandler<internalBufferType,reinterpretType,endianessPolicy,signPolicy>::Write(internalBufferType value, unsigned char* buffer, size_t bufferSize) const
 {
 	
 	//mask
@@ -727,12 +727,12 @@ static boost::shared_ptr<BufferHandler::DataHandler> CreateBufferHandler(unsigne
 			{
 				if (sizeInBits+(startbit%8)<=32)
 				{
-					typedef Implementation::GenericIntegerHandler<boost::uint32_t,boost::uint32_t,Implementation::EndianessPolicyNoSwap<boost::uint32_t>,Implementation::SignExtensionPolicyNone<boost::uint32_t>> Handler;
+					typedef Implementation::GenericHandler<boost::uint32_t,boost::uint32_t,Implementation::EndianessPolicyNoSwap<boost::uint32_t>,Implementation::SignExtensionPolicyNone<boost::uint32_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 				else
 				{
-					typedef Implementation::GenericIntegerHandler<boost::uint64_t,boost::uint64_t,Implementation::EndianessPolicyNoSwap<boost::uint64_t>,Implementation::SignExtensionPolicyNone<boost::uint64_t>> Handler;
+					typedef Implementation::GenericHandler<boost::uint64_t,boost::uint64_t,Implementation::EndianessPolicyNoSwap<boost::uint64_t>,Implementation::SignExtensionPolicyNone<boost::uint64_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 			}
@@ -740,12 +740,12 @@ static boost::shared_ptr<BufferHandler::DataHandler> CreateBufferHandler(unsigne
 			{
 				if (sizeInBits+(startbit%8)<=32)
 				{
-					typedef Implementation::GenericIntegerHandler<boost::uint32_t,boost::uint32_t,Implementation::EndianessPolicySwap<boost::uint32_t>,Implementation::SignExtensionPolicyNone<boost::uint32_t>> Handler;
+					typedef Implementation::GenericHandler<boost::uint32_t,boost::uint32_t,Implementation::EndianessPolicySwap<boost::uint32_t>,Implementation::SignExtensionPolicyNone<boost::uint32_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 				else
 				{
-					typedef Implementation::GenericIntegerHandler<boost::uint64_t,boost::uint64_t,Implementation::EndianessPolicySwap<boost::uint64_t>,Implementation::SignExtensionPolicyNone<boost::uint64_t>> Handler;
+					typedef Implementation::GenericHandler<boost::uint64_t,boost::uint64_t,Implementation::EndianessPolicySwap<boost::uint64_t>,Implementation::SignExtensionPolicyNone<boost::uint64_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 			}
@@ -753,12 +753,12 @@ static boost::shared_ptr<BufferHandler::DataHandler> CreateBufferHandler(unsigne
 			{
 				if (sizeInBits+(startbit%8)<=32)
 				{
-					typedef Implementation::GenericIntegerHandler<boost::int32_t,boost::int32_t,Implementation::EndianessPolicyNoSwap<boost::uint32_t>,Implementation::SignExtensionPolicyExtend<boost::uint32_t>> Handler;
+					typedef Implementation::GenericHandler<boost::int32_t,boost::int32_t,Implementation::EndianessPolicyNoSwap<boost::uint32_t>,Implementation::SignExtensionPolicyExtend<boost::uint32_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 				else
 				{
-					typedef Implementation::GenericIntegerHandler<boost::int64_t,boost::int64_t,Implementation::EndianessPolicyNoSwap<boost::uint64_t>,Implementation::SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+					typedef Implementation::GenericHandler<boost::int64_t,boost::int64_t,Implementation::EndianessPolicyNoSwap<boost::uint64_t>,Implementation::SignExtensionPolicyExtend<boost::uint64_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 			}
@@ -766,12 +766,12 @@ static boost::shared_ptr<BufferHandler::DataHandler> CreateBufferHandler(unsigne
 			{
 				if (sizeInBits+(startbit%8)<=32)
 				{
-					typedef Implementation::GenericIntegerHandler<boost::int32_t,boost::int32_t,Implementation::EndianessPolicySwap<boost::uint32_t>,Implementation::SignExtensionPolicyExtend<boost::uint32_t>> Handler;
+					typedef Implementation::GenericHandler<boost::int32_t,boost::int32_t,Implementation::EndianessPolicySwap<boost::uint32_t>,Implementation::SignExtensionPolicyExtend<boost::uint32_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 				else
 				{
-					typedef Implementation::GenericIntegerHandler<boost::int64_t,boost::int64_t,Implementation::EndianessPolicySwap<boost::uint64_t>,Implementation::SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+					typedef Implementation::GenericHandler<boost::int64_t,boost::int64_t,Implementation::EndianessPolicySwap<boost::uint64_t>,Implementation::SignExtensionPolicyExtend<boost::uint64_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 			}
@@ -780,12 +780,12 @@ static boost::shared_ptr<BufferHandler::DataHandler> CreateBufferHandler(unsigne
 				//if (sizeInBits+(startbit%8)<=32) --> can't happen as floats are always 32 bits and startbit%8 == 0 is aligned
 				if (sizeInBits == 32)
 				{
-					typedef Implementation::GenericIntegerHandler<boost::int64_t,float,Implementation::EndianessPolicyNoSwap<boost::uint64_t>,Implementation::SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+					typedef Implementation::GenericHandler<boost::int64_t,float,Implementation::EndianessPolicyNoSwap<boost::uint64_t>,Implementation::SignExtensionPolicyExtend<boost::uint64_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 				else
 				{
-					typedef Implementation::GenericIntegerHandler<boost::int64_t,double,Implementation::EndianessPolicyNoSwap<boost::uint64_t>,Implementation::SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+					typedef Implementation::GenericHandler<boost::int64_t,double,Implementation::EndianessPolicyNoSwap<boost::uint64_t>,Implementation::SignExtensionPolicyExtend<boost::uint64_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 			}
@@ -794,12 +794,12 @@ static boost::shared_ptr<BufferHandler::DataHandler> CreateBufferHandler(unsigne
 				//if (sizeInBits+(startbit%8)<=32) --> can't happen as floats are always 32 bits and startbit%8 == 0 is aligned
 				if (sizeInBits == 32)
 				{
-					typedef Implementation::GenericIntegerHandler<boost::int64_t,float,Implementation::EndianessPolicySwap<boost::uint64_t>,Implementation::SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+					typedef Implementation::GenericHandler<boost::int64_t,float,Implementation::EndianessPolicySwap<boost::uint64_t>,Implementation::SignExtensionPolicyExtend<boost::uint64_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 				else
 				{
-					typedef Implementation::GenericIntegerHandler<boost::int64_t,double,Implementation::EndianessPolicySwap<boost::uint64_t>,Implementation::SignExtensionPolicyExtend<boost::uint64_t>> Handler;
+					typedef Implementation::GenericHandler<boost::int64_t,double,Implementation::EndianessPolicySwap<boost::uint64_t>,Implementation::SignExtensionPolicyExtend<boost::uint64_t>> Handler;
 					return boost::shared_ptr<Handler>(new Handler(startbit,sizeInBits));
 				}
 			}
