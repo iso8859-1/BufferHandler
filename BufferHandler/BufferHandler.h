@@ -334,6 +334,23 @@ public:
 	virtual bool ReadB(const unsigned char* , size_t ) const { return static_cast<bool>(0); }
 };
 
+struct SignPolicyUnsigned
+{
+	static int IntValue(bool value)
+	{
+		return value ? 1 : 0;
+	}
+};
+
+struct SignPolicySigned
+{
+	static int IntValue(bool value)
+	{
+		return value ? -1 : 0;
+	}
+};
+
+template <typename SignPolicy>
 class BitDataHandler : public BufferHandler::DataHandler
 {
 	unsigned int m_startByteOffset;
@@ -341,9 +358,10 @@ class BitDataHandler : public BufferHandler::DataHandler
 	unsigned char m_readMask;
 	unsigned char m_writeMask;
 
-	bool ReadBit(const unsigned char* buffer, size_t ) const
+	int ReadBit(const unsigned char* buffer, size_t ) const
 	{
-		return ((*reinterpret_cast<const unsigned char*>(buffer+m_startByteOffset)) & m_readMask) != 0;
+		bool result = ((*reinterpret_cast<const unsigned char*>(buffer+m_startByteOffset)) & m_readMask);
+		return  SignPolicy::IntValue(result);
 	}
 	void WriteBit(bool value, unsigned char* buffer, size_t ) const
 	{
@@ -706,7 +724,16 @@ static boost::shared_ptr<BufferHandler::DataHandler> CreateBufferHandler(unsigne
 	}
 	else if (sizeInBits == 1)
 	{
-		return boost::shared_ptr<Implementation::BitDataHandler>(new Implementation::BitDataHandler(startbit));
+		switch (type)
+		{
+		case (BufferHandler::UnsignedIntegerBigEndian):
+		case (BufferHandler::UnsignedIntegerLittleEndian):
+			return boost::shared_ptr<Implementation::BitDataHandler<Implementation::SignPolicyUnsigned>>(new Implementation::BitDataHandler<Implementation::SignPolicyUnsigned>(startbit));
+		case (BufferHandler::SignedIntegerBigEndian):
+		case (BufferHandler::SignedIntegerLittleEndian):
+			return boost::shared_ptr<Implementation::BitDataHandler<Implementation::SignPolicySigned>>(new Implementation::BitDataHandler<Implementation::SignPolicySigned>(startbit));
+		}
+		
 	}
 	else if ((sizeInBits == 8 || sizeInBits == 16 || sizeInBits == 32 || sizeInBits ==64) && startbit % 8 == 0)
 	{
