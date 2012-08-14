@@ -413,7 +413,7 @@ template<typename T>
 struct SignExtensionPolicyExtend
 {
 	T mask;
-	SignExtensionPolicyExtend(unsigned int bitSize) : mask( (~0) << (bitSize-1) )
+	SignExtensionPolicyExtend(unsigned int bitSize) : mask( (~static_cast<T>(0)) << (bitSize-1) )
 	{
 		//create a mask that contains only 1 except for the lowest bitSize-1 bits
 	}
